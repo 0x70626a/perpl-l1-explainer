@@ -9,6 +9,7 @@
 <meta property="og:description" content="On-chain survey: how a dominant app (Uniswap on Ethereum, pump.fun on Solana, Perpl on Monad) becomes its L1's economic engine and deflates the gas token.">
 <meta name="twitter:card" content="summary_large_image">
 <title>Killer Apps & L1 Deflation — Uniswap · pump.fun · Perpl</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
   :root {
     --bg: #f4f3f9; --surface: #fbfaff; --surface-2: #f6f4fc;
@@ -232,21 +233,21 @@
 <!-- 01 -->
 <section>
   <div class="wrap"><div class="col">
-    <div class="sec-head" id="burn-share"><span class="sec-no">01</span><h2>Each app has burned ~6–8% of its chain's entire supply-destruction</h2></div>
-    <p class="sec-sub">A striking rhyme across three very different designs: the leading application on each L1 accounts for a similar slice of every native token that chain has ever burned. What differs is whether the burn is <em>permanent</em> — and how long the app had to wait to start.</p>
+    <div class="sec-head" id="burn-share"><span class="sec-no">01</span><h2>Perpl has burned ~25% of all MON — a bigger slice of its chain than Uniswap or pump.fun</h2></div>
+    <p class="sec-sub">The leading application on each L1 takes a real share of every native token its chain burns — and Perpl's is the largest of the three, about a quarter of all MON, from genesis. What differs beyond size: whether the burn is <em>permanent</em>, and how long the app had to wait to start.</p>
 
     <div class="stats">
       <div class="stat s-uni"><span class="v">~6%</span><span class="k">Uniswap → ETH</span><span class="s">of all ETH ever burned · up to 24% including composed flow · #1 dApp burner</span></div>
       <div class="stat s-pump"><span class="v">~6.3%</span><span class="k">pump.fun → SOL</span><span class="s">of all SOL ever burned · but the mechanism was switched off Feb 2025</span></div>
-      <div class="stat s-perpl"><span class="v">~7.9%</span><span class="k">Perpl → MON</span><span class="s">of all MON ever burned · in just ~5 months · still compounding</span></div>
+      <div class="stat s-perpl"><span class="v">~25%</span><span class="k">Perpl → MON</span><span class="s">of all MON ever burned · in just ~5 months · the largest share of the three</span></div>
     </div>
 
-    <div class="bars" role="img" aria-label="Share of each chain's all-time native-token burn: Perpl 7.9 percent, pump.fun 6.3 percent, Uniswap 6 to 24 percent.">
-      <div class="bar-row"><span class="lbl">Perpl / MON</span><span class="track"><span class="fill" style="width:33%;background:var(--perpl)"></span></span><span class="val" style="color:var(--perpl)">7.9%</span></div>
-      <div class="bar-row"><span class="lbl">pump.fun / SOL</span><span class="track"><span class="fill" style="width:26%;background:var(--pump)"></span></span><span class="val" style="color:var(--pump)">6.3%</span></div>
-      <div class="bar-row"><span class="lbl">Uniswap / ETH</span><span class="track"><span class="fill ghost" style="width:100%;background:var(--uni)"></span><span class="fill" style="width:25%;background:var(--uni)"></span></span><span class="val" style="color:var(--uni)">6–24%</span></div>
+    <div class="bars" role="img" aria-label="Share of each chain's all-time native-token burn: Perpl about 25 percent, pump.fun 6.3 percent, Uniswap 6 percent.">
+      <div class="bar-row"><span class="lbl">Perpl / MON</span><span class="track"><span class="fill" style="width:100%;background:var(--perpl)"></span></span><span class="val" style="color:var(--perpl)">~25%</span></div>
+      <div class="bar-row"><span class="lbl">pump.fun / SOL</span><span class="track"><span class="fill" style="width:25%;background:var(--pump)"></span></span><span class="val" style="color:var(--pump)">6.3%</span></div>
+      <div class="bar-row"><span class="lbl">Uniswap / ETH</span><span class="track"><span class="fill" style="width:24%;background:var(--uni)"></span></span><span class="val" style="color:var(--uni)">6%</span></div>
     </div>
-    <p class="cap"><b>Share of chain's all-time burn.</b> Uniswap's solid bar is direct-router attribution; the faint bar extends to include composed flow (§02). Uniswap and pump.fun denominators are cited chain-wide totals; Perpl's is computed on-chain from <span class="mono">monad.transactions</span>.</p>
+    <p class="cap"><b>Share of each chain's all-time native-token burn.</b> Uniswap shown at its direct 6% (composability lifts it toward 24% — see §03). Perpl's ~25% is full-call-tree attribution across its Exchange, forwarder, and DelegatedAccount routes; Uniswap and pump.fun denominators are cited chain-wide totals.</p>
   </div></div>
 </section>
 
@@ -262,7 +263,7 @@
     <div class="stats">
       <div class="stat s-uni"><span class="v">0 ETH</span><span class="k">Uniswap · Apr 2019</span><span class="s">EIP-1559 didn't exist until Aug 2021 — Uniswap couldn't burn ETH for its first ~2.75 years</span></div>
       <div class="stat s-pump"><span class="v">~25K SOL</span><span class="k">pump.fun · Jun 2024</span><span class="s">~$4M · pre-SIMD-0096, when Solana still burned 50% of priority fees</span></div>
-      <div class="stat s-perpl"><span class="v">1.73M MON</span><span class="k">Perpl · today (5 mo)</span><span class="s">= 7.9% of ALL MON ever burned · Monad burns the base fee from genesis</span></div>
+      <div class="stat s-perpl"><span class="v">5.49M MON</span><span class="k">Perpl · today (5 mo)</span><span class="s">= ~25% of ALL MON ever burned · Monad burns the base fee from genesis</span></div>
     </div>
     <p class="cap">The structural point: <b>Perpl deflates MON from block one</b>, because Monad shipped EIP-1559 base-fee burn at genesis. Uniswap waited nearly three years for Ethereum to add the mechanism at all.</p>
 
@@ -271,13 +272,13 @@
       <table>
         <thead><tr><th>App · token</th><th>Native burned</th><th>≈ USD</th><th>Share of L1 burn</th><th>Still deflationary?</th></tr></thead>
         <tbody>
-          <tr><td class="app"><span class="tag" style="background:var(--uni)"></span>Uniswap · ETH</td><td class="n">0.28–1.12M ETH</td><td class="n">$0.7–2.8B</td><td class="n">6–24%</td><td><span class="yes">✔ permanent (EIP-1559)</span></td></tr>
+          <tr><td class="app"><span class="tag" style="background:var(--uni)"></span>Uniswap · ETH</td><td class="n">0.28–1.12M ETH</td><td class="n">$0.7–2.8B</td><td class="n">6%</td><td><span class="yes">✔ permanent (EIP-1559)</span></td></tr>
           <tr><td class="app"><span class="tag" style="background:var(--pump)"></span>pump.fun · SOL</td><td class="n">~0.70M SOL</td><td class="n">~$115M</td><td class="n">~6%</td><td><span class="no">✘ ended Feb-2025 (SIMD-0096)</span></td></tr>
-          <tr class="perpl-row"><td class="app"><span class="tag" style="background:var(--perpl)"></span>Perpl · MON</td><td class="n">1.73M MON</td><td class="n">~$37K</td><td class="n">~7.9%</td><td><span class="yes">✔ Monad burns base fee</span></td></tr>
+          <tr class="perpl-row"><td class="app"><span class="tag" style="background:var(--perpl)"></span>Perpl · MON</td><td class="n">5.49M MON</td><td class="n">~$117K</td><td class="n">~25%</td><td><span class="yes">✔ Monad burns base fee</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="cap"><b>Why Perpl's USD looks small — and why it doesn't matter yet.</b> MON is early ($0.021, 100B supply) and Monad's throughput keeps base fees near the 100-gwei floor, so <em>all</em> Monad burn to date is only ~$465K — Perpl already captures ~8% of it. The share is the signal; the dollar scales with MON's price and congestion.</p>
+    <p class="cap"><b>Why Perpl's USD looks small — and why it doesn't matter yet.</b> MON is early ($0.021, 100B supply) and Monad's throughput keeps base fees near the 100-gwei floor, so <em>all</em> Monad burn to date is only ~$465K — Perpl already accounts for <b>~25%</b> of it. The share is the signal; the dollar scales with MON's price and congestion.</p>
   </div></div>
 </section>
 
@@ -310,7 +311,7 @@
       </div>
       <div class="dvc">
         <div class="dvc-row"><span class="dvc-lbl">Uniswap · measured</span><span class="dvc-bar"><span class="dvc-direct" style="flex:0 0 25%">6% direct</span><span class="dvc-composed">→ 24% composed &nbsp;(~4×)</span></span></div>
-        <div class="dvc-row p"><span class="dvc-lbl">Perpl · today</span><span class="dvc-bar"><span class="dvc-direct" style="flex:0 0 33%">~7.9% direct</span><span class="dvc-composed">→ composed premium still ahead</span></span></div>
+        <div class="dvc-row p"><span class="dvc-lbl">Perpl · today</span><span class="dvc-bar"><span class="dvc-direct" style="flex:0 0 52%">~25% direct</span><span class="dvc-composed">→ composed premium still ahead</span></span></div>
       </div>
       <p class="cap">Direct use is only the floor. Uniswap is the liquidity layer of Ethereum DeFi; <b>Perpl is positioned to be the exchange-and-collateral layer of Monad DeFi</b> — the only foundational exchange on the chain, so that premium accrues to it.</p>
     </div>
@@ -332,8 +333,8 @@
           <tr><td class="metric">Volume</td><td class="n">$30.6M → $3.06T</td><td class="n">$3.46B → $202B</td><td class="perpl-col">$649M → <i>~$16B</i></td></tr>
           <tr><td class="metric">Trading fees</td><td class="n">~$92K → $bns LP</td><td class="n">$34.6M → $1.29B</td><td class="perpl-col">$262K → <i>~$6.5M</i></td></tr>
           <tr><td class="metric">Activity</td><td class="n">60.5K → 448M swaps</td><td class="n">45.3M → 3.25B trades</td><td class="perpl-col">8.0M → <i>~200M</i> fills</td></tr>
-          <tr><td class="metric">Gas-token burned</td><td class="n">0 → 0.28–1.12M ETH</td><td class="n">~25K → ~0.70M SOL</td><td class="perpl-col">1.73M → <i>~43M</i> MON</td></tr>
-          <tr><td class="metric">Gas paid to L1</td><td class="n">108 → 2.34M ETH</td><td class="n">~50K → ~2.7M SOL</td><td class="perpl-col">1.79M → <i>~45M</i> MON</td></tr>
+          <tr><td class="metric">Gas-token burned</td><td class="n">0 → 0.28–1.12M ETH</td><td class="n">~25K → ~0.70M SOL</td><td class="perpl-col">5.49M → <i>~137M</i> MON</td></tr>
+          <tr><td class="metric">Gas paid to L1</td><td class="n">108 → 2.34M ETH</td><td class="n">~50K → ~2.7M SOL</td><td class="perpl-col">5.63M → <i>~141M</i> MON</td></tr>
         </tbody>
       </table>
     </div>
@@ -341,20 +342,20 @@
 
     <div class="box">
       <h3>Gas paid = value routed to the L1</h3>
-      <p><em>Burn</em> counts only the deflationary slice (and, for ETH, only post-2021). <b>Total gas paid</b> — every unit of blockspace the app's activity demands — is the cleaner measure of the value an app routes to its chain, and it counts the whole life. Uniswap paid <b>108 ETH in gas in its first five months</b> when its burn was still zero, and <b>~2.34M ETH over its life</b>. Perpl has already routed <b>1.79M MON</b> to Monad in ~5 months (1.73M of it burned; only ~55K MON went to validators as tips). Blockspace demand is the through-line: each of these apps is, first and always, a fee engine for its L1.</p>
+      <p><em>Burn</em> counts only the deflationary slice (and, for ETH, only post-2021). <b>Total gas paid</b> — every unit of blockspace the app's activity demands — is the cleaner measure of the value an app routes to its chain, and it counts the whole life. Uniswap paid <b>108 ETH in gas in its first five months</b> when its burn was still zero, and <b>~2.34M ETH over its life</b>. Perpl has already routed <b>5.63M MON</b> to Monad in ~5 months (5.49M of it burned; ~148K MON to validators as tips). Blockspace demand is the through-line: each of these apps is, first and always, a fee engine for its L1.</p>
     </div>
 
-    <p class="subhead">Perpl among all Monad protocols — by gas consumed</p>
+    <p class="subhead">Perpl vs Monad protocols — direct-attribution gas</p>
     <div class="bars" role="img" aria-label="Monad protocols ranked by gas: Fastlane 33.8 percent, Perpl 20.8 percent, Redstone 15.5, Pyth 4, Chainlink 3.8, Kuru 3.7, Metamask 3.4, LeverUp 2.6, Uniswap 1.7.">
       <div class="bar-row"><span class="lbl">Fastlane<span class="ptype">MEV infra</span></span><span class="track"><span class="fill" style="width:100%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">33.8%</span></div>
-      <div class="bar-row"><span class="lbl">Perpl<span class="ptype">perp DEX · app</span></span><span class="track"><span class="fill" style="width:61.5%;background:var(--perpl)"></span></span><span class="val" style="color:var(--perpl)">20.8%</span></div>
+      <div class="bar-row"><span class="lbl">Perpl<span class="ptype">perp DEX · direct slice</span></span><span class="track"><span class="fill" style="width:61.5%;background:var(--perpl)"></span></span><span class="val" style="color:var(--perpl)">20.8%</span></div>
       <div class="bar-row"><span class="lbl">Redstone<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:45.9%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">15.5%</span></div>
       <div class="bar-row"><span class="lbl">Pyth<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:11.8%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">4.0%</span></div>
       <div class="bar-row"><span class="lbl">Chainlink<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:11.2%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">3.8%</span></div>
       <div class="bar-row"><span class="lbl">Kuru<span class="ptype">DEX · app</span></span><span class="track"><span class="fill" style="width:10.9%;background:var(--ink-soft)"></span></span><span class="val">3.7%</span></div>
       <div class="bar-row"><span class="lbl">Uniswap<span class="ptype">DEX · app</span></span><span class="track"><span class="fill" style="width:5%;background:var(--uni)"></span></span><span class="val" style="color:var(--uni)">1.7%</span></div>
     </div>
-    <p class="cap"><b>Share of gas among Monad's top-20 identified protocols</b> (Dune query <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>, Perpl's lifetime). Perpl is the <b>#2 gas consumer on all of Monad</b> — behind only Fastlane (transaction-ordering infrastructure) and ahead of every oracle and app. Among user-facing applications, <b>Perpl is #1 by ~5.6×</b> (20.8% vs Kuru 3.7%). Counting all Monad gas including the long tail, Perpl is ~8.6%.</p>
+    <p class="cap"><b>Direct to-address gas share among Monad's top-20 protocols</b> (Dune query <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>). This view counts only txns sent straight to the Exchange — ~32% of Perpl's gas — so it undercounts Perpl ~3×. On a <b>full-call-tree</b> basis (Exchange + forwarder + DelegatedAccount routes) Perpl is <b>~27% of ALL Monad gas — the #1 consumer on the chain</b>, ahead of Fastlane's infrastructure gas.</p>
   </div></div>
 </section>
 
@@ -432,7 +433,7 @@
         <ul>
           <li><span class="tier t-chain">CHAIN</span>Uniswap: Dune <span class="mono">dex.trades</span> + <span class="mono">ethereum.transactions</span> (burn = gas × base fee; gas paid = gas × gas_price); 5-month cut &lt; 2019-04-02.</li>
           <li><span class="tier t-chain">CHAIN</span>pump.fun: Dune <span class="mono">pumpdotfun_solana</span> / <span class="mono">pumpswap_solana</span>; 5-month cut &lt; 2024-06-19; SOL burn/gas est. from tx counts × sampled fees.</li>
-          <li><span class="tier t-chain">CHAIN</span>Perpl: Dune <span class="mono">monad.transactions</span> + query <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a> (protocol ranking) + AUSD <span class="mono">balanceOf</span>; volume/fees from PAT ClickHouse, cross-checked to the dollar.</li>
+          <li><span class="tier t-chain">CHAIN</span>Perpl: <b>full-call-tree</b> attribution via Monad internal-call traces (Exchange + forwarder + DelegatedAccount routes; a to=Exchange-only view undercounts ~3×) — 5.49M MON burned (base 100 gwei × gas). Dune + query <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>; AUSD <span class="mono">balanceOf</span>; volume/fees from PAT ClickHouse, cross-checked to the dollar.</li>
           <li><span class="tier t-cite">CITED</span>Chain-wide burn totals, comparables &amp; peak-SOL: ultrasound.money, DefiLlama (per-token series), CoinGecko.</li>
         </ul>
       </div>

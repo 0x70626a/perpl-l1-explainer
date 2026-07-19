@@ -193,6 +193,11 @@
   .t-est { background: var(--perpl-soft); color: var(--perpl); }
   .t-cite { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
   .stamp { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .qref { margin-top: 24px; }
+  .qref summary { font-family: var(--mono); font-size: 12px; color: var(--perpl); cursor: pointer; letter-spacing: 0.03em; }
+  .qref summary:hover { text-decoration: underline; }
+  .sqlref { overflow-x: auto; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+  .sqlref code { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); white-space: pre; line-height: 1.55; display: block; }
 
   @media (max-width: 720px) {
     .stats { grid-template-columns: 1fr; } .grid2 { grid-template-columns: 1fr; }
@@ -247,7 +252,7 @@
       <div class="bar-row"><span class="lbl">pump.fun / SOL</span><span class="track"><span class="fill" style="width:25%;background:var(--pump)"></span></span><span class="val" style="color:var(--pump)">6.3%</span></div>
       <div class="bar-row"><span class="lbl">Uniswap / ETH</span><span class="track"><span class="fill" style="width:24%;background:var(--uni)"></span></span><span class="val" style="color:var(--uni)">6%</span></div>
     </div>
-    <p class="cap"><b>Share of each chain's all-time native-token burn.</b> Uniswap shown at its direct 6% (composability lifts it toward 24% — see §03). Perpl's ~25% is full-call-tree attribution across its Exchange, forwarder, and DelegatedAccount routes; Uniswap and pump.fun denominators are cited chain-wide totals.</p>
+    <p class="cap"><b>Share of each chain's all-time native-token burn.</b> Uniswap shown at its direct 6% (composability lifts it toward 24% — see §03). Perpl's ~25% is full-call-tree attribution (<a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune query 8031622</a>) across its Exchange, forwarder, and DelegatedAccount routes; Uniswap and pump.fun denominators are cited chain-wide totals.</p>
   </div></div>
 </section>
 
@@ -278,7 +283,7 @@
         </tbody>
       </table>
     </div>
-    <p class="cap"><b>Why Perpl's USD looks small — and why it doesn't matter yet.</b> MON is early ($0.021, 100B supply) and Monad's throughput keeps base fees near the 100-gwei floor, so <em>all</em> Monad burn to date is only ~$465K — Perpl already accounts for <b>~25%</b> of it. The share is the signal; the dollar scales with MON's price and congestion.</p>
+    <p class="cap"><b>Why Perpl's USD looks small — and why it doesn't matter yet.</b> MON is early ($0.021, 100B supply) and Monad's throughput keeps base fees near the 100-gwei floor, so <em>all</em> Monad burn to date is only ~$465K — Perpl already accounts for <b>~25%</b> of it. The share is the signal; the dollar scales with MON's price and congestion. <span style="color:var(--muted)">Perpl burn: <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune query 8031622</a> (full call tree, all routes).</span></p>
   </div></div>
 </section>
 
@@ -433,7 +438,7 @@
         <ul>
           <li><span class="tier t-chain">CHAIN</span>Uniswap: Dune <span class="mono">dex.trades</span> + <span class="mono">ethereum.transactions</span> (burn = gas × base fee; gas paid = gas × gas_price); 5-month cut &lt; 2019-04-02.</li>
           <li><span class="tier t-chain">CHAIN</span>pump.fun: Dune <span class="mono">pumpdotfun_solana</span> / <span class="mono">pumpswap_solana</span>; 5-month cut &lt; 2024-06-19; SOL burn/gas est. from tx counts × sampled fees.</li>
-          <li><span class="tier t-chain">CHAIN</span>Perpl: <b>full-call-tree</b> attribution via Monad internal-call traces (Exchange + forwarder + DelegatedAccount routes; a to=Exchange-only view undercounts ~3×) — 5.49M MON burned (base 100 gwei × gas). Dune + query <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>; AUSD <span class="mono">balanceOf</span>; volume/fees from PAT ClickHouse, cross-checked to the dollar.</li>
+          <li><span class="tier t-chain">CHAIN</span>Perpl: <b>full-call-tree</b> attribution via Monad internal-call traces (Exchange + forwarder + DelegatedAccount routes; a to=Exchange-only view undercounts ~3×) — 5.49M MON burned (base 100 gwei × gas), <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune query 8031622</a> (ranking view: <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>); AUSD <span class="mono">balanceOf</span>; volume/fees from PAT ClickHouse, cross-checked to the dollar.</li>
           <li><span class="tier t-cite">CITED</span>Chain-wide burn totals, comparables &amp; peak-SOL: ultrasound.money, DefiLlama (per-token series), CoinGecko.</li>
         </ul>
       </div>
@@ -449,6 +454,41 @@
         </ul>
       </div>
     </div>
+    <details class="qref">
+      <summary>▸ Reference query — Perpl total gas &amp; burn, all routes (Dune 8031622)</summary>
+      <pre class="sqlref"><code>-- Perpl — Total Gas &amp; Burn (ALL routes)
+-- A transaction counts as Perpl gas iff it interacted with the exchange:
+--   UX/API = sent straight to the exchange (forwarder-relayed or direct)
+--   SDK/SC = sent to a market-maker DelegatedAccount that emitted an exchange event
+-- A `to = exchange`-only view (e.g. a gas-by-protocol query) sees just the UX/API third.
+WITH tagged AS (
+  SELECT
+    CASE WHEN t."to" = 0x34B6552d57a35a1D042CcAe1951BD1C370112a6F
+         THEN 'UX / API (forwarder + direct)'
+         ELSE 'SDK / smart-contract (DelegatedAccount)' END AS path,
+    CAST(t.gas_used AS double) AS gas_used,
+    CAST(t.gas_used AS double) * CAST(t.gas_price AS double) AS fee_wei,
+    t.success
+  FROM monad.transactions t
+  WHERE t.block_time &gt;= TIMESTAMP '2026-01-01'
+    AND ( t."to" = 0x34B6552d57a35a1D042CcAe1951BD1C370112a6F
+       OR EXISTS ( SELECT 1 FROM monad.logs l
+                   WHERE l.tx_hash = t.hash
+                     AND l.contract_address = 0x34B6552d57a35a1D042CcAe1951BD1C370112a6F
+                     AND l.block_time &gt;= TIMESTAMP '2026-01-01' ) )
+)
+SELECT
+  COALESCE(path, 'TOTAL — all Perpl gas') AS path,
+  COUNT(*)                        AS n_tx,
+  ROUND(SUM(gas_used) / 1e12, 2)  AS gas_trillions,
+  ROUND(SUM(fee_wei) / 1e18, 0)   AS fee_mon,
+  ROUND(SUM(gas_used) * 1e-7, 0)  AS burned_mon,
+  COUNT_IF(NOT success)           AS n_revert
+FROM tagged
+GROUP BY ROLLUP (path)
+ORDER BY gas_trillions DESC</code></pre>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px">Live: <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">dune.com/queries/8031622</a> · the §03 protocol ranking uses <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a> (direct to-address).</p>
+    </details>
     <p class="stamp">Perpl · Uniswap · pump.fun — L1 value &amp; gas-token deflation survey · figures as of 19 Jul 2026 · MON $0.0213 · ETH $1,870 · SOL $76.3 · brand colors: Perpl #6F5CFF, Uniswap #FF007A, Solana #14F195, pump.fun #5FCB88, Ethereum #627EEA</p>
   </div></div>
 </footer>

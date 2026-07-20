@@ -199,6 +199,23 @@
   .sqlref { overflow-x: auto; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
   .sqlref code { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); white-space: pre; line-height: 1.55; display: block; }
 
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 16px; margin-top: 20px; }
+  .gchart { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .gchart.s-uni { border-color: color-mix(in srgb, var(--uni) 34%, var(--line)); }
+  .gchart.s-pump { border-color: color-mix(in srgb, var(--pump) 34%, var(--line)); }
+  .gchart.s-perpl { border-color: color-mix(in srgb, var(--perpl) 42%, var(--line)); }
+  .gchart .eyebrow { display: block; margin-bottom: 6px; }
+  .gchart h3 { font-size: 16px; margin-bottom: 2px; }
+  .gchart .chart-svg { margin: 10px 0 2px; }
+  .panel .chart-svg, .box .chart-svg { margin: 12px 0 6px; }
+  .panel h3 { font-size: 16px; margin-bottom: 2px; }
+  .growth { margin-top: 12px; display: flex; flex-direction: column; gap: 9px; }
+  .grow-row { border-top: 1px solid var(--line); padding-top: 8px; }
+  .grow-row .gm { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+  .grow-row .line { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 2px; }
+  .grow-row .gv { font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .grow-row .gx { font-family: var(--mono); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+
   @media (max-width: 720px) {
     .stats { grid-template-columns: 1fr; } .grid2 { grid-template-columns: 1fr; }
     .footgrid { grid-template-columns: 1fr; } .box .split { grid-template-columns: 1fr; gap: 12px; }
@@ -224,10 +241,10 @@
       <span class="item"><span class="dot" style="background:var(--perpl)"></span>Perpl · Monad (MON)</span>
     </div>
     <nav class="tocnav" aria-label="Jump to section">
-      <a href="#burn-share">01 · Burn share</a>
-      <a href="#deflation">02 · Deflation</a>
+      <a href="#burn-share">01 · Burn &amp; deflation</a>
+      <a href="#value">02 · Economic value</a>
       <a href="#composability">03 · Composability</a>
-      <a href="#value">04 · Economic value</a>
+      <a href="#cadence">04 · Cadence</a>
       <a href="#collateral">05 · Collateral</a>
     </nav>
   </div></div>
@@ -241,28 +258,12 @@
     <div class="sec-head" id="burn-share"><span class="sec-no">01</span><h2>Perpl has burned ~18% of all MON, a bigger slice of its chain than Uniswap or pump.fun</h2></div>
     <p class="sec-sub">The leading application on each L1 takes a real share of every native token its chain burns; Perpl's is the largest of the three, nearly a fifth of all MON, from genesis. What differs beyond size: whether the burn is <em>permanent</em>, and how long the app had to wait to start.</p>
 
-    <div class="stats">
-      <div class="stat s-uni"><span class="v">~6%</span><span class="k">Uniswap → ETH</span><span class="s">of all ETH ever burned · up to 24% including composed flow · #1 dApp burner</span></div>
-      <div class="stat s-pump"><span class="v">~6.3%</span><span class="k">pump.fun → SOL</span><span class="s">of all SOL ever burned · priority-fee burn ended 2025 (SIMD-0096); base-fee burn continues</span></div>
-      <div class="stat s-perpl"><span class="v">~18%</span><span class="k">Perpl → MON</span><span class="s">of all MON ever burned · in just ~5 months · the largest share of the three</span></div>
-    </div>
-
     <div class="bars" role="img" aria-label="Share of each chain's all-time native-token burn: Perpl about 18 percent, pump.fun 6.3 percent, Uniswap 6 percent.">
       <div class="bar-row"><span class="lbl">Perpl / MON</span><span class="track"><span class="fill" style="width:100%;background:var(--perpl)"></span></span><span class="val" style="color:var(--perpl)">~18%</span></div>
       <div class="bar-row"><span class="lbl">pump.fun / SOL</span><span class="track"><span class="fill" style="width:35%;background:var(--pump)"></span></span><span class="val" style="color:var(--pump)">6.3%</span></div>
       <div class="bar-row"><span class="lbl">Uniswap / ETH</span><span class="track"><span class="fill" style="width:33%;background:var(--uni)"></span></span><span class="val" style="color:var(--uni)">6%</span></div>
     </div>
     <p class="cap"><b>Share of each chain's all-time native-token burn.</b> Uniswap shown at its direct 6% (composability lifts it toward 24%, see §03). Perpl's ~18% is full-call-tree attribution (<a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune query 8031622</a>) across its Exchange, forwarder, and DelegatedAccount routes; Uniswap and pump.fun denominators are cited chain-wide totals.</p>
-  </div></div>
-</section>
-
-<hr class="rule">
-
-<!-- 02 -->
-<section>
-  <div class="wrap"><div class="col">
-    <div class="sec-head" id="deflation"><span class="sec-no">02</span><h2>Deflation: the gas token burned</h2></div>
-    <p class="sec-sub">The size of the deflation is set by the chain's fee-burn design, not just the app's activity, and a design can be turned off by governance, or switched on from block one.</p>
 
     <p class="subhead">At five months old: what each app had burned</p>
     <div class="stats">
@@ -270,20 +271,177 @@
       <div class="stat s-pump"><span class="v">~42K SOL</span><span class="k">pump.fun · Jun 2024</span><span class="s">~$3.2M · pre-SIMD-0096, when Solana still burned 50% of priority fees</span></div>
       <div class="stat s-perpl"><span class="v">5.44M MON</span><span class="k">Perpl · today (5 mo)</span><span class="s">= ~18% of ALL MON ever burned · Monad burns the base fee from genesis</span></div>
     </div>
-    <p class="cap">The structural point: <b>Perpl deflates MON from block one</b>, because Monad shipped EIP-1559 base-fee burn at genesis. Uniswap waited nearly three years for Ethereum to add the mechanism at all.</p>
+    <p class="cap">The point: <b>Perpl deflates MON from block one</b>, because Monad shipped EIP-1559 base-fee burn at genesis. Uniswap waited nearly three years for Ethereum to add the mechanism at all.</p>
 
-    <p class="subhead">Today: lifetime totals</p>
+    <p class="subhead">Lifetime totals</p>
     <div class="twrap">
       <table>
-        <thead><tr><th>App · token</th><th>Native burned</th><th>≈ USD</th><th>Share of L1 burn</th><th>Still deflationary?</th></tr></thead>
+        <thead><tr><th>App · token</th><th>Native burned</th><th>≈ USD</th><th>Still deflationary?</th></tr></thead>
         <tbody>
-          <tr><td class="app"><span class="tag" style="background:var(--uni)"></span>Uniswap · ETH</td><td class="n">0.28 to 1.12M ETH</td><td class="n">$0.52 to 2.1B</td><td class="n">6%</td><td><span class="yes">✔ permanent (EIP-1559)</span></td></tr>
-          <tr><td class="app"><span class="tag" style="background:var(--pump)"></span>pump.fun · SOL</td><td class="n">~0.70M SOL</td><td class="n">~$53M</td><td class="n">~6%</td><td><span class="mono" style="color:var(--amber);font-size:13px">◐ base-fee burn only (SIMD-0096, 2025)</span></td></tr>
-          <tr class="perpl-row"><td class="app"><span class="tag" style="background:var(--perpl)"></span>Perpl · MON</td><td class="n">5.44M MON</td><td class="n">~$116K</td><td class="n">~18%</td><td><span class="yes">✔ Monad burns base fee</span></td></tr>
+          <tr><td class="app"><span class="tag" style="background:var(--uni)"></span>Uniswap · ETH</td><td class="n">0.28 to 1.12M ETH</td><td class="n">$0.52 to 2.1B</td><td><span class="yes">✔ permanent (EIP-1559)</span></td></tr>
+          <tr><td class="app"><span class="tag" style="background:var(--pump)"></span>pump.fun · SOL</td><td class="n">~0.70M SOL</td><td class="n">~$53M</td><td><span class="mono" style="color:var(--amber);font-size:13px">◐ base-fee burn only (SIMD-0096, 2025)</span></td></tr>
+          <tr class="perpl-row"><td class="app"><span class="tag" style="background:var(--perpl)"></span>Perpl · MON</td><td class="n">5.44M MON</td><td class="n">~$116K</td><td><span class="yes">✔ Monad burns base fee</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="cap"><b>Why Perpl's USD looks small, and why it doesn't matter yet.</b> MON is early ($0.0213, 100B supply) and Monad's throughput keeps base fees near the 100-gwei floor, so <em>all</em> Monad burn to date is only ~$641K, and Perpl already accounts for <b>~18%</b> of it. The share is the signal; the dollar scales with MON's price and congestion. <span style="color:var(--muted)">Perpl burn: <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune query 8031622</a> (full call tree, all routes).</span></p>
+    <p class="cap"><b>Why Perpl's USD looks small, and why it doesn't matter yet.</b> MON is early ($0.0213, 100B supply) and Monad's throughput keeps base fees near the 100-gwei floor, so <em>all</em> Monad burn to date is only ~$641K, and Perpl already accounts for <b>~18%</b> of it. The share is the signal; the dollar scales with MON's price and congestion.</p>
+
+    <div class="box accent">
+      <h3>What the burn is worth — today, and per year</h3>
+      <p><b>To date:</b> 5.44M MON burned ≈ <b>$116K</b> at $0.0213. <b>Run-rate: ~13M MON burned per year</b> (~$0.28M/yr at today's price) — permanently, from block one. Two levers scale the dollar value, and Perpl is positioned for both: <b>MON's price</b> and <b>Monad congestion</b>. On that same ~13M MON/yr, the burn is <b>~$2.8M/yr if MON re-rates 10× to $0.21</b>, and ~$13M/yr at $1 — before any growth in Perpl's own volume, which is still climbing (the arc in §02 projects ~136M MON/yr at pace).</p>
+    </div>
+  </div></div>
+</section>
+
+<hr class="rule">
+
+<!-- 02 · economic value -->
+<section>
+  <div class="wrap"><div class="col">
+    <div class="sec-head" id="value"><span class="sec-no">02</span><h2>Economic value created</h2></div>
+    <p class="sec-sub">The pattern repeats: a category-defining app doesn't just grow itself, it re-rates its whole L1. First, how each chain's price, users, capital, and activity grew over its app's rise; then Perpl's own arc, <b>five months in → today</b>, beside its one-year projection.</p>
+
+    <p class="subhead">How each app re-rated its L1 · launch → peak</p>
+    <div class="grid3">
+      <div class="gchart s-uni">
+        <span class="eyebrow">Uniswap → Ethereum · Nov 2018 → Nov 2021 peak</span>
+        <h3>The app that re-rated ETH</h3>
+        <svg class="chart-svg" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="ETH price from Uniswap launch (Nov 2018, ~$130) to Ethereum's Nov 2021 peak ($4,878), about 37 times.">
+          <defs>
+            <linearGradient id="pg-eth" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--uni)" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="var(--uni)" stop-opacity="0.02"/>
+            </linearGradient>
+            <marker id="pa-eth" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--uni)"/>
+            </marker>
+          </defs>
+          <line x1="34" y1="18" x2="34" y2="120" stroke="var(--line)"/>
+          <line x1="34" y1="120" x2="288" y2="120" stroke="var(--line)"/>
+          <g font-family="var(--mono)" font-size="8.5" fill="var(--muted)" text-anchor="end"><text x="30" y="21">$4.9K</text><text x="30" y="123">$0</text></g>
+          <path d="M34.0,117.3 L57.1,118.1 L80.2,115.8 L103.3,116.2 L126.4,117.3 L149.5,112.1 L172.5,107.7 L195.6,91.4 L218.7,62.5 L241.8,76.1 L264.9,53.1 L288.0,18.0 L288.0,120 L34.0,120 Z" fill="url(#pg-eth)"/>
+          <path d="M34.0,117.3 L57.1,118.1 L80.2,115.8 L103.3,116.2 L126.4,117.3 L149.5,112.1 L172.5,107.7 L195.6,91.4 L218.7,62.5 L241.8,76.1 L264.9,53.1 L288.0,18.0" fill="none" stroke="var(--uni)" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round"/>
+          <line x1="34.0" y1="117.3" x2="288.0" y2="18.0" stroke="var(--uni)" stroke-width="1.3" stroke-dasharray="4 3" opacity="0.5" marker-end="url(#pa-eth)"/>
+          <g transform="translate(161,65)">
+            <rect x="-17" y="-10" width="34" height="17" rx="5" fill="var(--surface)" stroke="var(--uni)"/>
+            <text x="0" y="3" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="var(--uni)">37×</text>
+          </g>
+          <circle cx="34.0" cy="117.3" r="2.6" fill="var(--uni)"/>
+          <circle cx="288.0" cy="18.0" r="4" fill="var(--uni)"/>
+          <circle cx="288.0" cy="18.0" r="8" fill="none" stroke="var(--uni)" stroke-opacity="0.3" stroke-width="2"/>
+          <g font-family="var(--mono)" font-size="8.5" fill="var(--muted)" text-anchor="middle"><text x="34" y="133">Nov'18</text><text x="161" y="133">2020</text><text x="288" y="133">Nov'21</text></g>
+          <text x="288" y="9" font-family="var(--mono)" font-size="9" font-weight="700" fill="var(--uni)" text-anchor="end">$4,878</text>
+        </svg>
+        <div class="growth">
+          <div class="grow-row"><span class="gm">ETH price</span><div class="line"><span class="gv">$130 → $4,878</span><span class="gx" style="color:var(--uni)">37×</span></div></div>
+          <div class="grow-row"><span class="gm">DeFi TVL on ETH</span><div class="line"><span class="gv">~$0.3B → ~$108B</span><span class="gx" style="color:var(--uni)">~360×</span></div></div>
+          <div class="grow-row"><span class="gm">Active addresses / day</span><div class="line"><span class="gv">~300K → ~750K</span><span class="gx" style="color:var(--uni)">~2.5×</span></div></div>
+          <div class="grow-row"><span class="gm">Transactions / day</span><div class="line"><span class="gv">~500K → ~1.35M</span><span class="gx" style="color:var(--uni)">~2.7×</span></div></div>
+        </div>
+      </div>
+      <div class="gchart s-pump">
+        <span class="eyebrow">pump.fun → Solana · Jan 2024 → Jan 2025 peak</span>
+        <h3>The app that carried SOL</h3>
+        <svg class="chart-svg" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="SOL price from pump.fun launch (Jan 2024, ~$100) to Solana's Jan 2025 peak (~$294), about 2.9 times.">
+          <defs>
+            <linearGradient id="pg-sol" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--pump)" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="var(--pump)" stop-opacity="0.02"/>
+            </linearGradient>
+            <marker id="pa-sol" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--pump)"/>
+            </marker>
+          </defs>
+          <line x1="34" y1="18" x2="34" y2="120" stroke="var(--line)"/>
+          <line x1="34" y1="120" x2="288" y2="120" stroke="var(--line)"/>
+          <g font-family="var(--mono)" font-size="8.5" fill="var(--muted)" text-anchor="end"><text x="30" y="21">$294</text><text x="30" y="123">$0</text></g>
+          <path d="M34.0,85.3 L57.1,81.8 L80.2,54.1 L103.3,66.2 L126.4,61.0 L149.5,69.7 L172.5,59.3 L195.6,69.7 L218.7,62.8 L241.8,38.5 L264.9,47.1 L288.0,18.0 L288.0,120 L34.0,120 Z" fill="url(#pg-sol)"/>
+          <path d="M34.0,85.3 L57.1,81.8 L80.2,54.1 L103.3,66.2 L126.4,61.0 L149.5,69.7 L172.5,59.3 L195.6,69.7 L218.7,62.8 L241.8,38.5 L264.9,47.1 L288.0,18.0" fill="none" stroke="var(--pump)" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round"/>
+          <line x1="34.0" y1="85.3" x2="288.0" y2="18.0" stroke="var(--pump)" stroke-width="1.3" stroke-dasharray="4 3" opacity="0.5" marker-end="url(#pa-sol)"/>
+          <g transform="translate(161,49)">
+            <rect x="-17" y="-10" width="34" height="17" rx="5" fill="var(--surface)" stroke="var(--pump)"/>
+            <text x="0" y="3" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="var(--pump)">~2.9×</text>
+          </g>
+          <circle cx="34.0" cy="85.3" r="2.6" fill="var(--pump)"/>
+          <circle cx="288.0" cy="18.0" r="4" fill="var(--pump)"/>
+          <circle cx="288.0" cy="18.0" r="8" fill="none" stroke="var(--pump)" stroke-opacity="0.3" stroke-width="2"/>
+          <g font-family="var(--mono)" font-size="8.5" fill="var(--muted)" text-anchor="middle"><text x="34" y="133">Jan'24</text><text x="161" y="133">2024</text><text x="288" y="133">Jan'25</text></g>
+          <text x="288" y="9" font-family="var(--mono)" font-size="9" font-weight="700" fill="var(--pump)" text-anchor="end">$294</text>
+        </svg>
+        <div class="growth">
+          <div class="grow-row"><span class="gm">SOL price</span><div class="line"><span class="gv">~$100 → ~$294</span><span class="gx" style="color:var(--pump)">~2.9×</span></div></div>
+          <div class="grow-row"><span class="gm">DeFi TVL on SOL</span><div class="line"><span class="gv">~$1.5B → ~$9B</span><span class="gx" style="color:var(--pump)">~6×</span></div></div>
+          <div class="grow-row"><span class="gm">Active addresses / day</span><div class="line"><span class="gv">~1M → ~5M</span><span class="gx" style="color:var(--pump)">~5×</span></div></div>
+          <div class="grow-row"><span class="gm">Non-vote txns / day</span><div class="line"><span class="gv">~35M → ~75M</span><span class="gx" style="color:var(--pump)">~2×</span></div></div>
+        </div>
+      </div>
+      <div class="gchart s-perpl">
+        <span class="eyebrow">Perpl → Monad · launch → now (~5 mo)</span>
+        <h3>The engine, 5 months in</h3>
+        <svg class="chart-svg" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="MON price is flat and early since Perpl launch, about $0.0213 today; the L1 re-rating is still ahead, shown as a dashed upward projection.">
+          <defs>
+            <linearGradient id="pg-mon" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--perpl)" stop-opacity="0.30"/>
+              <stop offset="100%" stop-color="var(--perpl)" stop-opacity="0.02"/>
+            </linearGradient>
+            <marker id="pa-mon" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--perpl)"/>
+            </marker>
+          </defs>
+          <line x1="34" y1="18" x2="34" y2="120" stroke="var(--line)"/>
+          <line x1="34" y1="120" x2="288" y2="120" stroke="var(--line)"/>
+          <g font-family="var(--mono)" font-size="8.5" fill="var(--muted)" text-anchor="end"><text x="30" y="21">peak?</text><text x="30" y="123">$0</text></g>
+          <path d="M34,106 L63,104 L92,107 L121,103 L150,105 L180,101 L210,99 L210,120 L34,120 Z" fill="url(#pg-mon)"/>
+          <path d="M34,106 L63,104 L92,107 L121,103 L150,105 L180,101 L210,99" fill="none" stroke="var(--perpl)" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round"/>
+          <line x1="210" y1="99" x2="284" y2="26" stroke="var(--perpl)" stroke-width="1.6" stroke-dasharray="5 3" opacity="0.85" marker-end="url(#pa-mon)"/>
+          <circle cx="34" cy="106" r="2.6" fill="var(--perpl)"/>
+          <circle cx="210" cy="99" r="4" fill="var(--perpl)"/>
+          <circle cx="210" cy="99" r="8" fill="none" stroke="var(--perpl)" stroke-opacity="0.3" stroke-width="2"/>
+          <text x="206" y="92" font-family="var(--mono)" font-size="9" font-weight="700" fill="var(--perpl)" text-anchor="end">$0.0213</text>
+          <text x="288" y="14" font-family="var(--mono)" font-size="8.5" fill="var(--perpl)" text-anchor="end" opacity="0.9">the re-rating ahead</text>
+          <g font-family="var(--mono)" font-size="8.5" fill="var(--muted)" text-anchor="middle"><text x="34" y="133">launch</text><text x="210" y="133">today</text></g>
+        </svg>
+        <div class="growth">
+          <div class="grow-row"><span class="gm">MON price</span><div class="line"><span class="gv">the forward re-rating</span><span class="gx" style="color:var(--muted);font-size:11px">§04–05</span></div></div>
+          <div class="grow-row"><span class="gm">Collateral locked</span><div class="line"><span class="gv">$0 → $5.19M</span><span class="gx" style="color:var(--perpl)">new</span></div></div>
+          <div class="grow-row"><span class="gm">Trading accounts</span><div class="line"><span class="gv">0 → ~4,000</span><span class="gx" style="color:var(--perpl)">new</span></div></div>
+          <div class="grow-row"><span class="gm">Fills · volume</span><div class="line"><span class="gv">8.0M · $649M</span><span class="gx" style="color:var(--perpl)">new</span></div></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>How the killer app lifted its chain, launch → cycle peak.</b> Each card traces the native token's price from the app's launch to the L1's cycle peak — the dashed arrow marks the net move — above the four growth metrics. Uniswap (Nov 2018 → ETH's Nov 2021 peak) and pump.fun (Jan 2024 → SOL's Jan 2025 peak) are shown at their <em>mature</em> peaks; Perpl is ~5 months in, the same engine spinning up. MON's own re-rating is the forward thesis (Cadence, §04; the collateral black hole, §05), not a realized multiple — the dashed upward line on MON's card is an illustrative projection, not history. Ecosystem figures are order-of-magnitude, from public sources (CoinGecko price; DeFiLlama TVL; Etherscan / Solana explorers for addresses & transactions); Solana address counts vary across sources. Perpl figures are measured on-chain (collateral & fills via Dune / ClickHouse; ~4,000 trading accounts via ClickHouse).</p>
+
+    <p class="subhead">Perpl's arc: five months in → today → one year out</p>
+    <div class="twrap">
+      <table>
+        <thead><tr><th>Metric</th><th>Uniswap · 5mo → ~7yr</th><th>pump.fun · 5mo → ~2yr</th><th class="perpl-col">Perpl · now → 1yr</th></tr></thead>
+        <tbody>
+          <tr><td class="metric">Volume</td><td class="n">$30.6M → $3.06T</td><td class="n">$3.46B → $202B</td><td class="perpl-col">$649M → <i>~$16B</i></td></tr>
+          <tr><td class="metric">Trading fees</td><td class="n">~$92K → $bns LP</td><td class="n">$34.6M → $1.29B</td><td class="perpl-col">$262K → <i>~$6.5M</i></td></tr>
+          <tr><td class="metric">Activity</td><td class="n">60.5K → 448M swaps</td><td class="n">45.3M → 3.25B trades</td><td class="perpl-col">8.0M → <i>~200M</i> fills</td></tr>
+          <tr><td class="metric">Gas-token burned</td><td class="n">0 → 0.28 to 1.12M ETH</td><td class="n">~42K → ~0.70M SOL</td><td class="perpl-col">5.44M → <i>~136M</i> MON</td></tr>
+          <tr><td class="metric">Gas paid to L1</td><td class="n">108 → 2.34M ETH</td><td class="n">~83K → ~2.7M SOL</td><td class="perpl-col">5.63M → <i>~141M</i> MON</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cap">Each cell reads <b>five months in → current</b> (Perpl: now → one year out). At five months Perpl's volume was already <b>~21× early Uniswap</b>; Uniswap's burn was 0 then but it still paid 108 ETH in gas. The <b>italic Perpl figures are a projection</b> (current numbers × Lighter's ~25× first-year vault growth): illustrative of the trajectory, not a forecast (Lighter's ramp was incentive-driven, ~1,000× Perpl's scale). Uniswap "now" fees are billions in LP fees plus ~2.34M ETH of gas; pump.fun figures from spellbook data start (Apr 2024).</p>
+
+    <div class="box">
+      <h3>Gas paid = value routed to the L1</h3>
+      <p><em>Burn</em> counts only the deflationary slice (and, for ETH, only post-2021). <b>Total gas paid</b> (every unit of blockspace the app's activity demands) is the cleaner measure of the value an app routes to its chain, and it counts the whole life. Uniswap paid <b>108 ETH in gas in its first five months</b> when its burn was still zero, and <b>~2.34M ETH over its life</b>. Perpl has already routed <b>5.63M MON</b> to Monad in ~5 months (5.44M of it burned; ~190K MON to validators as tips). Blockspace demand is the through-line: each of these apps is, first and always, a fee engine for its L1.</p>
+    </div>
+
+    <p class="subhead">Perpl vs Monad protocols: share of ALL Monad gas</p>
+    <div class="bars" role="img" aria-label="Monad protocols by share of all chain gas: Perpl 18 percent, Fastlane 9, Redstone 4.1, Pyth 1.1, Chainlink 1, Kuru 1, Uniswap 0.4.">
+      <div class="bar-row"><span class="lbl">Perpl<span class="ptype">perp DEX · full call tree</span></span><span class="track"><span class="fill" style="width:100%;background:var(--perpl)"></span></span><span class="val" style="color:var(--perpl)">~18%</span></div>
+      <div class="bar-row"><span class="lbl">Fastlane<span class="ptype">MEV infra</span></span><span class="track"><span class="fill" style="width:49.5%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">9.0%</span></div>
+      <div class="bar-row"><span class="lbl">Redstone<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:22.5%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">4.1%</span></div>
+      <div class="bar-row"><span class="lbl">Pyth<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:5.9%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">1.1%</span></div>
+      <div class="bar-row"><span class="lbl">Chainlink<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:5.5%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">1.0%</span></div>
+      <div class="bar-row"><span class="lbl">Kuru<span class="ptype">DEX · app</span></span><span class="track"><span class="fill" style="width:5.5%;background:var(--ink-soft)"></span></span><span class="val">1.0%</span></div>
+      <div class="bar-row"><span class="lbl">Uniswap<span class="ptype">DEX · app</span></span><span class="track"><span class="fill" style="width:2.5%;background:var(--uni)"></span></span><span class="val" style="color:var(--uni)">0.4%</span></div>
+    </div>
+    <p class="cap"><b>Share of all Monad gas.</b> Perpl is measured on a <b>full-call-tree</b> basis, covering Exchange + forwarder + DelegatedAccount (market-maker / SDK) routes via Dune query <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">8031622</a>, putting it at <b>~18% of all chain gas, the #1 consumer on Monad</b>, ahead of Fastlane's MEV infrastructure. The other protocols are shown by direct to-address gas (Dune query <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>), which ≈ their full footprint, since they don't route through proxy contracts the way Perpl's account architecture does. A direct-to-Exchange-only view captures just ~32% of Perpl's gas and understates it ~3×.</p>
   </div></div>
 </section>
 
@@ -325,42 +483,113 @@
 
 <hr class="rule">
 
-<!-- 03 -->
+<!-- 05 · cadence -->
 <section>
   <div class="wrap"><div class="col">
-    <div class="sec-head" id="value"><span class="sec-no">04</span><h2>Economic value created</h2></div>
-    <p class="sec-sub">Each precedent shown as <b>five months in → today</b>, beside Perpl now and its Lighter-shaped one-year projection: the arc, not just the endpoint.</p>
+    <div class="sec-head" id="cadence"><span class="sec-no">04</span><h2>Cadence: the consensus that makes Monad the default trading chain</h2></div>
+    <p class="sec-sub"><em>Cadence</em>, Category Labs' next-generation consensus, is why serious flow — and its collateral — comes to Monad: many proposers, no single gatekeeper, and blocks faster than the network delay.</p>
 
-    <div class="twrap">
-      <table>
-        <thead><tr><th>Metric</th><th>Uniswap · 5mo → ~7yr</th><th>pump.fun · 5mo → ~2yr</th><th class="perpl-col">Perpl · now → 1yr</th></tr></thead>
-        <tbody>
-          <tr><td class="metric">Volume</td><td class="n">$30.6M → $3.06T</td><td class="n">$3.46B → $202B</td><td class="perpl-col">$649M → <i>~$16B</i></td></tr>
-          <tr><td class="metric">Trading fees</td><td class="n">~$92K → $bns LP</td><td class="n">$34.6M → $1.29B</td><td class="perpl-col">$262K → <i>~$6.5M</i></td></tr>
-          <tr><td class="metric">Activity</td><td class="n">60.5K → 448M swaps</td><td class="n">45.3M → 3.25B trades</td><td class="perpl-col">8.0M → <i>~200M</i> fills</td></tr>
-          <tr><td class="metric">Gas-token burned</td><td class="n">0 → 0.28 to 1.12M ETH</td><td class="n">~42K → ~0.70M SOL</td><td class="perpl-col">5.44M → <i>~136M</i> MON</td></tr>
-          <tr><td class="metric">Gas paid to L1</td><td class="n">108 → 2.34M ETH</td><td class="n">~83K → ~2.7M SOL</td><td class="perpl-col">5.63M → <i>~141M</i> MON</td></tr>
-        </tbody>
-      </table>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Many proposers, one block</h3>
+        <svg class="chart-svg" viewBox="0 0 320 176" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Three proposers propose in parallel; validators include each with a 2f+1 vote; the proposals merge deterministically into one block.">
+          <defs><marker id="cm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--perpl)"/></marker></defs>
+          <g font-family="var(--mono)">
+            <rect x="8" y="14" width="52" height="32" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/><text x="34" y="34" text-anchor="middle" font-size="11" fill="var(--ink)">P1</text>
+            <rect x="8" y="66" width="52" height="32" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/><text x="34" y="86" text-anchor="middle" font-size="11" fill="var(--ink)">P2</text>
+            <rect x="8" y="118" width="52" height="32" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/><text x="34" y="138" text-anchor="middle" font-size="11" fill="var(--ink)">P3</text>
+            <line x1="60" y1="30" x2="122" y2="78" stroke="var(--perpl)" stroke-width="1.5" opacity="0.8" marker-end="url(#cm)"/>
+            <line x1="60" y1="82" x2="122" y2="84" stroke="var(--perpl)" stroke-width="1.5" opacity="0.8" marker-end="url(#cm)"/>
+            <line x1="60" y1="134" x2="122" y2="90" stroke="var(--perpl)" stroke-width="1.5" opacity="0.8" marker-end="url(#cm)"/>
+            <rect x="124" y="58" width="74" height="50" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/>
+            <text x="161" y="80" text-anchor="middle" font-size="10" fill="var(--ink)">validators</text>
+            <text x="161" y="95" text-anchor="middle" font-size="9" fill="var(--muted)">2f+1 vote</text>
+            <line x1="198" y1="83" x2="232" y2="83" stroke="var(--perpl)" stroke-width="1.5" marker-end="url(#cm)"/>
+            <rect x="236" y="50" width="74" height="66" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/>
+            <rect x="244" y="58" width="58" height="13" rx="3" fill="var(--perpl)" opacity="1"/>
+            <rect x="244" y="76" width="58" height="13" rx="3" fill="var(--perpl)" opacity="0.65"/>
+            <rect x="244" y="94" width="58" height="13" rx="3" fill="var(--perpl)" opacity="0.4"/>
+            <text x="273" y="130" text-anchor="middle" font-size="9" fill="var(--muted)">one block</text>
+            <text x="34" y="165" text-anchor="middle" font-size="9" fill="var(--muted)">3 proposers, in parallel</text>
+          </g>
+        </svg>
+        <p class="cap">Proposers build in parallel; a 2f+1 vote includes each; they merge into one block — <b>no single party controls what's included or in what order</b>.</p>
+      </div>
+      <div class="panel">
+        <h3>Censorship-resistant</h3>
+        <svg class="chart-svg" viewBox="0 0 320 168" preserveAspectRatio="xMidYMid meet" role="img" aria-label="One user order fans out to several proposers. One proposer drops it, but the other correct proposers include it, so it still lands in the block.">
+          <defs><marker id="cf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--pump)"/></marker><marker id="cfx" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--amber)"/></marker></defs>
+          <g font-family="var(--mono)">
+            <text x="72" y="14" text-anchor="middle" font-size="9" fill="var(--ink)" font-weight="700">your order</text>
+            <circle cx="20" cy="46" r="5" fill="var(--perpl)"/>
+            <rect x="150" y="20" width="92" height="30" rx="7" fill="var(--surface)" stroke="var(--pump)" stroke-width="1.3"/><text x="196" y="38" text-anchor="middle" font-size="9.5" fill="var(--ink)">P1 includes ✓</text>
+            <line x1="28" y1="46" x2="146" y2="35" stroke="var(--pump)" stroke-width="1.5" opacity="0.9" marker-end="url(#cf)"/>
+            <rect x="150" y="60" width="92" height="30" rx="7" fill="var(--surface)" stroke="var(--amber)" stroke-width="1.3"/><text x="196" y="78" text-anchor="middle" font-size="9.5" fill="var(--muted)">P2 drops ✗</text>
+            <line x1="28" y1="46" x2="146" y2="75" stroke="var(--amber)" stroke-width="1.5" opacity="0.6" stroke-dasharray="4 3" marker-end="url(#cfx)"/>
+            <rect x="150" y="100" width="92" height="30" rx="7" fill="var(--surface)" stroke="var(--pump)" stroke-width="1.3"/><text x="196" y="118" text-anchor="middle" font-size="9.5" fill="var(--ink)">P3 includes ✓</text>
+            <line x1="28" y1="46" x2="146" y2="115" stroke="var(--pump)" stroke-width="1.5" opacity="0.9" marker-end="url(#cf)"/>
+            <rect x="268" y="44" width="44" height="44" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/>
+            <rect x="276" y="52" width="28" height="9" rx="2" fill="var(--pump)"/>
+            <text x="290" y="100" text-anchor="middle" font-size="9" fill="var(--muted)">block</text>
+            <line x1="242" y1="35" x2="264" y2="60" stroke="var(--pump)" stroke-width="1.5" opacity="0.9" marker-end="url(#cf)"/>
+            <line x1="242" y1="115" x2="264" y2="74" stroke="var(--pump)" stroke-width="1.5" opacity="0.9" marker-end="url(#cf)"/>
+            <text x="196" y="150" text-anchor="middle" font-size="9" fill="var(--muted)">one drops it — two others include it — it lands</text>
+          </g>
+        </svg>
+        <p class="cap">One leader can drop your order; with many proposers a correct one still includes it — <b>the order lands</b>. No leader-level front-running.</p>
+      </div>
     </div>
-    <p class="cap">Each cell reads <b>five months in → current</b> (Perpl: now → one year out). At five months Perpl's volume was already <b>~21× early Uniswap</b>; Uniswap's burn was 0 then but it still paid 108 ETH in gas. The <b>italic Perpl figures are a projection</b> (current numbers × Lighter's ~25× first-year vault growth): illustrative of the trajectory, not a forecast (Lighter's ramp was incentive-driven, ~1,000× Perpl's scale). Uniswap "now" fees are billions in LP fees plus ~2.34M ETH of gas; pump.fun figures from spellbook data start (Apr 2024).</p>
 
-    <div class="box">
-      <h3>Gas paid = value routed to the L1</h3>
-      <p><em>Burn</em> counts only the deflationary slice (and, for ETH, only post-2021). <b>Total gas paid</b> (every unit of blockspace the app's activity demands) is the cleaner measure of the value an app routes to its chain, and it counts the whole life. Uniswap paid <b>108 ETH in gas in its first five months</b> when its burn was still zero, and <b>~2.34M ETH over its life</b>. Perpl has already routed <b>5.63M MON</b> to Monad in ~5 months (5.44M of it burned; ~190K MON to validators as tips). Blockspace demand is the through-line: each of these apps is, first and always, a fee engine for its L1.</p>
+    <div class="panel">
+      <h3>Sub-network-delay blocks · CEX-grade latency</h3>
+      <svg class="chart-svg" viewBox="0 0 640 178" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Four slots shown as overlapping horizontal lanes on a time axis. A new slot opens every interval tau, smaller than the network delay, so blocks overlap and do not wait for each other.">
+        <defs><marker id="ct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+        <g font-family="var(--mono)">
+          <text x="320" y="18" text-anchor="middle" font-size="9.5" fill="var(--ink)" font-weight="700">a new block opens every τ — and τ &lt; Δ</text>
+          <line x1="20" y1="150" x2="620" y2="150" stroke="var(--line)"/>
+          <line x1="600" y1="150" x2="622" y2="150" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ct)"/>
+          <text x="618" y="165" text-anchor="end" font-size="8.5" fill="var(--muted)">time</text>
+          <rect x="60" y="24" width="150" height="20" rx="5" fill="var(--perpl)" opacity="0.22" stroke="var(--perpl)" stroke-width="1"/>
+          <text x="70" y="38" text-anchor="start" font-size="8.5" fill="var(--ink)">slot 1</text>
+          <rect x="130" y="52" width="150" height="20" rx="5" fill="var(--perpl)" opacity="0.26" stroke="var(--perpl)" stroke-width="1"/>
+          <text x="140" y="66" text-anchor="start" font-size="8.5" fill="var(--ink)">slot 2</text>
+          <rect x="200" y="80" width="150" height="20" rx="5" fill="var(--perpl)" opacity="0.3" stroke="var(--perpl)" stroke-width="1"/>
+          <text x="210" y="94" text-anchor="start" font-size="8.5" fill="var(--ink)">slot 3</text>
+          <rect x="270" y="108" width="150" height="20" rx="5" fill="var(--perpl)" opacity="0.34" stroke="var(--perpl)" stroke-width="1"/>
+          <text x="280" y="122" text-anchor="start" font-size="8.5" fill="var(--ink)">slot 4</text>
+          <line x1="60" y1="136" x2="130" y2="136" stroke="var(--perpl)" stroke-width="1.2"/>
+          <line x1="60" y1="132" x2="60" y2="140" stroke="var(--perpl)" stroke-width="1.2"/>
+          <line x1="130" y1="132" x2="130" y2="140" stroke="var(--perpl)" stroke-width="1.2"/>
+          <text x="95" y="133" text-anchor="middle" font-size="10" fill="var(--perpl)" font-weight="700">τ</text>
+          <line x1="210" y1="136" x2="420" y2="136" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <line x1="210" y1="132" x2="210" y2="140" stroke="var(--muted)" stroke-width="1.2"/>
+          <line x1="420" y1="132" x2="420" y2="140" stroke="var(--muted)" stroke-width="1.2"/>
+          <text x="315" y="133" text-anchor="middle" font-size="9" fill="var(--muted)">network delay Δ</text>
+        </g>
+      </svg>
+      <p class="cap">Slots open every interval τ and overlap, so blocks never wait for each other and the interval drops <b>below the network delay Δ</b> — with speculative finality after one voting round. Quote, fill, and cancel at CEX-grade latency, fully on-chain.</p>
     </div>
 
-    <p class="subhead">Perpl vs Monad protocols: share of ALL Monad gas</p>
-    <div class="bars" role="img" aria-label="Monad protocols by share of all chain gas: Perpl 18 percent, Fastlane 9, Redstone 4.1, Pyth 1.1, Chainlink 1, Kuru 1, Uniswap 0.4.">
-      <div class="bar-row"><span class="lbl">Perpl<span class="ptype">perp DEX · full call tree</span></span><span class="track"><span class="fill" style="width:100%;background:var(--perpl)"></span></span><span class="val" style="color:var(--perpl)">~18%</span></div>
-      <div class="bar-row"><span class="lbl">Fastlane<span class="ptype">MEV infra</span></span><span class="track"><span class="fill" style="width:49.5%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">9.0%</span></div>
-      <div class="bar-row"><span class="lbl">Redstone<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:22.5%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">4.1%</span></div>
-      <div class="bar-row"><span class="lbl">Pyth<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:5.9%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">1.1%</span></div>
-      <div class="bar-row"><span class="lbl">Chainlink<span class="ptype">oracle</span></span><span class="track"><span class="fill" style="width:5.5%;background:var(--muted)"></span></span><span class="val" style="color:var(--muted)">1.0%</span></div>
-      <div class="bar-row"><span class="lbl">Kuru<span class="ptype">DEX · app</span></span><span class="track"><span class="fill" style="width:5.5%;background:var(--ink-soft)"></span></span><span class="val">1.0%</span></div>
-      <div class="bar-row"><span class="lbl">Uniswap<span class="ptype">DEX · app</span></span><span class="track"><span class="fill" style="width:2.5%;background:var(--uni)"></span></span><span class="val" style="color:var(--uni)">0.4%</span></div>
+    <div class="box accent">
+      <h3>The collateral gravity well</h3>
+      <svg class="chart-svg" viewBox="0 0 520 108" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Majors bridge from other EVM chains, are posted as Perpl margin on Monad, and every fill burns MON.">
+        <defs><marker id="cg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--perpl)"/></marker></defs>
+        <g font-family="var(--mono)">
+          <rect x="8" y="34" width="150" height="44" rx="7" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.3"/><text x="83" y="60" text-anchor="middle" font-size="11" fill="var(--ink)">BTC · ETH · stables</text>
+          <text x="83" y="92" text-anchor="middle" font-size="8.5" fill="var(--muted)">on other EVM chains</text>
+          <line x1="160" y1="56" x2="196" y2="56" stroke="var(--perpl)" stroke-width="1.5" marker-end="url(#cg)"/>
+          <text x="178" y="46" text-anchor="middle" font-size="8" fill="var(--muted)">bridge</text>
+          <rect x="198" y="34" width="120" height="44" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/><text x="258" y="60" text-anchor="middle" font-size="12" fill="var(--ink)">Perpl margin</text>
+          <text x="258" y="92" text-anchor="middle" font-size="8.5" fill="var(--muted)">posted on Monad</text>
+          <line x1="320" y1="56" x2="356" y2="56" stroke="var(--perpl)" stroke-width="1.5" marker-end="url(#cg)"/>
+          <text x="338" y="46" text-anchor="middle" font-size="8" fill="var(--muted)">trade</text>
+          <rect x="358" y="34" width="150" height="44" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/><text x="433" y="60" text-anchor="middle" font-size="11" fill="var(--perpl)">every fill burns MON</text>
+          <text x="433" y="92" text-anchor="middle" font-size="8.5" fill="var(--muted)">deflation, from block one</text>
+        </g>
+      </svg>
+      <p style="margin-top:8px">Once Monad is the best place to <em>trade</em>, it becomes the best place to <em>hold trading collateral</em>. Perpl is the exchange-and-collateral layer that migration flows into (§03, §05).</p>
     </div>
-    <p class="cap"><b>Share of all Monad gas.</b> Perpl is measured on a <b>full-call-tree</b> basis, covering Exchange + forwarder + DelegatedAccount (market-maker / SDK) routes via Dune query <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">8031622</a>, putting it at <b>~18% of all chain gas, the #1 consumer on Monad</b>, ahead of Fastlane's MEV infrastructure. The other protocols are shown by direct to-address gas (Dune query <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>), which ≈ their full footprint, since they don't route through proxy contracts the way Perpl's account architecture does. A direct-to-Exchange-only view captures just ~32% of Perpl's gas and understates it ~3×.</p>
+    <p class="cap"><b>Cadence</b>: a multi-concurrent-proposer BFT protocol (n = 3f+1) with block intervals below the network delay, from Category Labs (Babel, Elsheimy, Heimbach, et al.). <span style="color:var(--muted)">Consensus-design claims cited to the Cadence protocol description; the collateral-migration thesis is forward-looking.</span></p>
   </div></div>
 </section>
 
@@ -440,6 +669,9 @@
           <li><span class="tier t-chain">CHAIN</span>pump.fun: Dune <span class="mono">pumpdotfun_solana</span> / <span class="mono">pumpswap_solana</span>; 5-month cut &lt; 2024-06-19; SOL burn/gas est. from tx counts × sampled fees.</li>
           <li><span class="tier t-chain">CHAIN</span>Perpl: <b>full-call-tree</b> attribution via Monad internal-call traces (Exchange + forwarder + DelegatedAccount routes; a to=Exchange-only view undercounts ~3×): 5.44M MON burned (base fee at the ~100-gwei floor), <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune query 8031622</a> (ranking view: <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a>); AUSD <span class="mono">balanceOf</span>; volume/fees from PAT ClickHouse, cross-checked to the dollar.</li>
           <li><span class="tier t-cite">CITED</span>Chain-wide burn totals, comparables &amp; peak-SOL: ultrasound.money, DefiLlama (per-token series), CoinGecko.</li>
+          <li><span class="tier t-cite">CITED</span>L1 growth, launch → peak (§02 charts): ETH/SOL price (CoinGecko), DeFi TVL (DefiLlama), active addresses &amp; transactions (Etherscan, Solana explorers). Order-of-magnitude; Solana address counts vary across sources. Perpl side (collateral, ~4,000 accounts, fills) measured on-chain via Dune / PAT ClickHouse.</li>
+          <li><span class="tier t-est">EST.</span>MON burn run-rate (~13M MON/yr ≈ $0.28M/yr at $0.0213) is annualized from the measured 5.44M MON burned over ~5 months (<a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune 8031622</a>); the price-leverage figures scale that run-rate by MON price.</li>
+          <li><span class="tier t-cite">CITED</span>Cadence consensus (§04): design claims per the Category Labs protocol description (Babel, Elsheimy, Heimbach, et al.). The collateral-migration thesis is forward-looking.</li>
         </ul>
       </div>
       <div>
@@ -448,7 +680,7 @@
           <li><span class="tier t-chain">CHAIN</span>All Perpl figures and Uniswap/pump.fun app-level activity are measured on-chain.</li>
           <li><span class="tier t-est">EST.</span>pump.fun SOL burn (~0.70M) and total SOL gas paid (~2.7M) are estimates, likely understated: the measured 5-month burn (~42K SOL) already ran ~66% above the original estimate, and the full-history on-chain scan exceeds the Dune tier's credit limit. Uniswap &amp; Perpl gas-paid are measured on-chain.</li>
           <li><span class="tier t-cite">CITED</span>ETH/SOL burn-<em>share</em> denominators are third-party chain-derived totals (medium confidence). Peak SOL (Jupiter 5.5M, Drift 3.0M) from DefiLlama per-token series.</li>
-          <li>Uniswap ETH burn is a range: direct-router (floor) → any tx executing a Uniswap swap, i.e. composed flow (ceiling), see §02.</li>
+          <li>Uniswap ETH burn is a range: direct-router (floor) → any tx executing a Uniswap swap, i.e. composed flow (ceiling), see §03.</li>
           <li>Lighter is a directional shape comparable (incentive-driven, ~1,000×+ Perpl's scale), not a like-for-like target.</li>
           <li><span class="tier t-est">PROJ</span>The "Perpl · 1 yr" column is illustrative (Perpl's figures × Lighter's ~25× first-year vault multiple), not a forecast.</li>
         </ul>
@@ -487,7 +719,7 @@ SELECT
 FROM tagged
 GROUP BY ROLLUP (path)
 ORDER BY gas_trillions DESC</code></pre>
-      <p style="font-size:12px;color:var(--muted);margin-top:10px">Live: <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">dune.com/queries/8031622</a> · the §03 protocol ranking uses <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a> (direct to-address).</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px">Live: <a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">dune.com/queries/8031622</a> · the §02 protocol ranking uses <a href="https://dune.com/queries/6776591" target="_blank" rel="noopener">6776591</a> (direct to-address).</p>
     </details>
     <p class="stamp">Perpl · Uniswap · pump.fun · L1 value &amp; gas-token deflation survey · figures as of 19 Jul 2026 · MON $0.0213 · ETH $1,870 · SOL $76.3 · brand colors: Perpl #6F5CFF, Uniswap #FF007A, Solana #14F195, pump.fun #5FCB88, Ethereum #627EEA</p>
   </div></div>

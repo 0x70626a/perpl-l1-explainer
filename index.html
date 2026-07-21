@@ -140,6 +140,7 @@
     padding: 3px 8px; border-radius: 999px; height: fit-content; white-space: nowrap; }
   .when.now { background: var(--perpl-soft); color: var(--perpl); }
   .when.soon { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+  .when.next { background: color-mix(in srgb, var(--amber) 16%, transparent); color: var(--amber); border: 1px solid color-mix(in srgb, var(--amber) 34%, var(--line)); }
   .step .body { font-size: 14.5px; color: var(--ink-soft); }
   .step .body b { color: var(--ink); }
   .chart-svg { width: 100%; height: auto; display: block; }
@@ -633,8 +634,8 @@
         <h3>From USD sink to MON sink</h3>
         <div class="steps">
           <div class="step"><span class="when now">Now</span><span class="body"><b>AUSD locked.</b> A USD-value sink; MON deflates only through gas.</span></div>
+          <div class="step"><span class="when next">Next</span><span class="body"><b>PLP: an HLP-style vault.</b> LPs deposit; market makers deploy the pooled capital to quote Perpl and backstop liquidations. A standing collateral sink that compounds with volume.</span></div>
           <div class="step"><span class="when soon">Soon</span><span class="body"><b>BTC / ETH / MON collateral + portfolio margin.</b> Perpl starts locking MON itself as margin, a direct native-token demand sink: the model that made Drift and Jupiter into SOL sinks and Aave into an ETH sink.</span></div>
-          <div class="step"><span class="when soon">Soon</span><span class="body"><b>PLP: an HLP-style vault.</b> LPs deposit; market makers deploy the pooled capital to quote Perpl and backstop liquidations. A standing collateral sink that compounds with volume.</span></div>
         </div>
       </div>
     </div>

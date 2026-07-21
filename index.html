@@ -571,6 +571,36 @@
       <p class="cap">Slots open every interval τ and overlap, so blocks never wait for each other and the interval drops <b>below the network delay Δ</b>. Speculative finality after one voting round. Quote, fill, and cancel at CEX-grade latency, fully onchain.</p>
     </div>
 
+    <div class="panel">
+      <h3>Cancel priority: makers quote tight</h3>
+      <svg class="chart-svg" viewBox="0 0 640 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A taker market order and a maker cancel land in the same block. Category Labs' ordering-rights rule makes the cancel execute before the market order, so the stale quote is pulled in time and the maker is not picked off.">
+        <defs><marker id="cpq" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--perpl)"/></marker></defs>
+        <g font-family="var(--mono)">
+          <text x="79" y="15" text-anchor="middle" font-size="9" fill="var(--muted)">same block</text>
+          <rect x="8" y="32" width="142" height="34" rx="7" fill="var(--surface)" stroke="var(--amber)" stroke-width="1.3"/>
+          <text x="79" y="48" text-anchor="middle" font-size="10" fill="var(--ink)">market order</text>
+          <text x="79" y="60" text-anchor="middle" font-size="8" fill="var(--muted)">taker, aggressive</text>
+          <rect x="8" y="96" width="142" height="34" rx="7" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.3"/>
+          <text x="79" y="112" text-anchor="middle" font-size="10" fill="var(--ink)">cancel</text>
+          <text x="79" y="124" text-anchor="middle" font-size="8" fill="var(--muted)">maker pulls stale quote</text>
+          <line x1="150" y1="49" x2="196" y2="74" stroke="var(--muted)" stroke-width="1.4" opacity="0.7" marker-end="url(#cpq)"/>
+          <line x1="150" y1="113" x2="196" y2="90" stroke="var(--muted)" stroke-width="1.4" opacity="0.7" marker-end="url(#cpq)"/>
+          <rect x="198" y="54" width="140" height="56" rx="8" fill="var(--surface)" stroke="var(--perpl)" stroke-width="1.4"/>
+          <text x="268" y="76" text-anchor="middle" font-size="10.5" fill="var(--perpl)" font-weight="700">ordering right</text>
+          <text x="268" y="91" text-anchor="middle" font-size="8.5" fill="var(--ink)">cancel executes</text>
+          <text x="268" y="102" text-anchor="middle" font-size="8.5" fill="var(--ink)">before market order</text>
+          <line x1="338" y1="82" x2="384" y2="82" stroke="var(--perpl)" stroke-width="1.5" marker-end="url(#cpq)"/>
+          <text x="510" y="15" text-anchor="middle" font-size="9" fill="var(--muted)">executes in this order</text>
+          <rect x="392" y="32" width="240" height="30" rx="7" fill="var(--surface)" stroke="var(--pump)" stroke-width="1.3"/>
+          <text x="404" y="51" text-anchor="start" font-size="9.5" fill="var(--ink)">① cancel · stale quote pulled ✓</text>
+          <rect x="392" y="70" width="240" height="30" rx="7" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.1" opacity="0.75"/>
+          <text x="404" y="89" text-anchor="start" font-size="9.5" fill="var(--muted)">② market order · nothing to hit</text>
+          <text x="510" y="126" text-anchor="middle" font-size="9.5" fill="var(--pump)" font-weight="700">maker not picked off</text>
+        </g>
+      </svg>
+      <p class="cap">A stale quote is a maker's worst trade. Price moves, a market order takes the old quote before the cancel lands, and the maker eats the loss. So makers quote wide. Give the exchange one ordering right, <b>cancels before market orders</b>, and the maker pulls as needed instead of churning. The bad fill never happens. <b>So they quote tight.</b> Hyperliquid built a whole chain to get this, and gave up composability for it. Category Labs' proposal puts the same right on a shared chain. Perpl keeps the composability (§03), and gets the tight book.</p>
+    </div>
+
     <div class="box accent">
       <h3>The collateral gravity well</h3>
       <svg class="chart-svg" viewBox="0 0 520 108" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Majors bridge from other EVM chains, are posted as Perpl margin on Monad, and every fill burns MON.">
@@ -590,7 +620,7 @@
       </svg>
       <p style="margin-top:8px">Make Monad the best place to trade and it becomes the best place to park trading collateral. Every major bridges in, becomes Perpl margin, and burns MON on the way. Perpl is where that flow lands (§03, §05).</p>
     </div>
-    <p class="cap"><b>Cadence</b>: a multi-concurrent-proposer BFT protocol (n = 3f+1) with block intervals below the network delay, from Category Labs (Babel, Elsheimy, Heimbach, et al.). <span style="color:var(--muted)">Consensus-design claims cited to the Cadence protocol description; the collateral-migration thesis is forward-looking.</span></p>
+    <p class="cap"><b>Cadence</b>: a multi-concurrent-proposer BFT protocol (n = 3f+1) with block intervals below the network delay, from Category Labs (Babel, Elsheimy, Heimbach, et al.). <b>Cancel priority</b> is Category Labs' <em>ordering-rights</em> proposal: applications state how their transactions are ordered (e.g. cancels before market orders) on a shared chain, without giving up composability (Canidio, "Giving Ordering Rights to Applications," <a href="https://arxiv.org/abs/2607.06144" target="_blank" rel="noopener">arXiv 2607.06144</a>). <span style="color:var(--muted)">Consensus-design claims cited to the Cadence protocol description; ordering rights are a proposal; Hyperliquid's own-chain tradeoff is per that paper; the collateral thesis is forward-looking.</span></p>
   </div></div>
 </section>
 
@@ -673,7 +703,7 @@
           <li><span class="tier t-cite">CITED</span>Chain-wide burn totals, comparables &amp; peak-SOL: ultrasound.money, DefiLlama (per-token series), CoinGecko.</li>
           <li><span class="tier t-cite">CITED</span>L1 growth, launch → peak (§02 charts): ETH/SOL price (CoinGecko), DeFi TVL (DefiLlama), active addresses &amp; transactions (Etherscan, Solana explorers). Order-of-magnitude; Solana address counts vary across sources. Perpl side (collateral, ~4,000 accounts, fills) measured onchain via Dune / PAT ClickHouse.</li>
           <li><span class="tier t-est">EST.</span>MON burn run-rate (~13M MON/yr ≈ $0.28M/yr at $0.0213) is annualized from the measured 5.44M MON burned over ~5 months (<a href="https://dune.com/queries/8031622" target="_blank" rel="noopener">Dune 8031622</a>); the price-leverage figures scale that run-rate by MON price.</li>
-          <li><span class="tier t-cite">CITED</span>Cadence consensus (§04): design claims per the Category Labs protocol description (Babel, Elsheimy, Heimbach, et al.). The collateral-migration thesis is forward-looking.</li>
+          <li><span class="tier t-cite">CITED</span>Cadence consensus (§04): design claims per the Category Labs protocol description (Babel, Elsheimy, Heimbach, et al.). Cancel priority / application ordering rights (§04): Category Labs' "Giving Ordering Rights to Applications" (unanimity override; Canidio, <a href="https://arxiv.org/abs/2607.06144" target="_blank" rel="noopener">arXiv 2607.06144</a>), a proposal; Hyperliquid's own-chain tradeoff and maker outcomes are per that paper and industry-observed. The collateral-migration thesis is forward-looking.</li>
         </ul>
       </div>
       <div>

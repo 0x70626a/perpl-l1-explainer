@@ -543,13 +543,13 @@
 
     <div class="panel">
       <h3>Sub-network-delay blocks · CEX-grade latency</h3>
-      <svg class="chart-svg" viewBox="0 0 640 178" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Four slots shown as overlapping horizontal lanes on a time axis. A new slot opens every interval tau, smaller than the network delay, so blocks overlap and do not wait for each other.">
+      <svg class="chart-svg" viewBox="0 0 640 196" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Four slots shown as overlapping horizontal lanes on a time axis. A new slot opens every interval tau, smaller than the network delay, so blocks overlap and do not wait for each other.">
         <defs><marker id="ct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
         <g font-family="var(--mono)">
           <text x="320" y="18" text-anchor="middle" font-size="9.5" fill="var(--ink)" font-weight="700">a new block opens every τ — and τ &lt; Δ</text>
-          <line x1="20" y1="150" x2="620" y2="150" stroke="var(--line)"/>
-          <line x1="600" y1="150" x2="622" y2="150" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ct)"/>
-          <text x="618" y="165" text-anchor="end" font-size="8.5" fill="var(--muted)">time</text>
+          <line x1="20" y1="170" x2="620" y2="170" stroke="var(--line)"/>
+          <line x1="600" y1="170" x2="622" y2="170" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ct)"/>
+          <text x="618" y="185" text-anchor="end" font-size="8.5" fill="var(--muted)">time</text>
           <rect x="60" y="24" width="150" height="20" rx="5" fill="var(--perpl)" opacity="0.22" stroke="var(--perpl)" stroke-width="1"/>
           <text x="70" y="38" text-anchor="start" font-size="8.5" fill="var(--ink)">slot 1</text>
           <rect x="130" y="52" width="150" height="20" rx="5" fill="var(--perpl)" opacity="0.26" stroke="var(--perpl)" stroke-width="1"/>
@@ -558,14 +558,14 @@
           <text x="210" y="94" text-anchor="start" font-size="8.5" fill="var(--ink)">slot 3</text>
           <rect x="270" y="108" width="150" height="20" rx="5" fill="var(--perpl)" opacity="0.34" stroke="var(--perpl)" stroke-width="1"/>
           <text x="280" y="122" text-anchor="start" font-size="8.5" fill="var(--ink)">slot 4</text>
-          <line x1="60" y1="136" x2="130" y2="136" stroke="var(--perpl)" stroke-width="1.2"/>
-          <line x1="60" y1="132" x2="60" y2="140" stroke="var(--perpl)" stroke-width="1.2"/>
-          <line x1="130" y1="132" x2="130" y2="140" stroke="var(--perpl)" stroke-width="1.2"/>
-          <text x="95" y="133" text-anchor="middle" font-size="10" fill="var(--perpl)" font-weight="700">τ</text>
-          <line x1="210" y1="136" x2="420" y2="136" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 3"/>
-          <line x1="210" y1="132" x2="210" y2="140" stroke="var(--muted)" stroke-width="1.2"/>
-          <line x1="420" y1="132" x2="420" y2="140" stroke="var(--muted)" stroke-width="1.2"/>
-          <text x="315" y="133" text-anchor="middle" font-size="9" fill="var(--muted)">network delay Δ</text>
+          <line x1="60" y1="150" x2="130" y2="150" stroke="var(--perpl)" stroke-width="1.2"/>
+          <line x1="60" y1="146" x2="60" y2="154" stroke="var(--perpl)" stroke-width="1.2"/>
+          <line x1="130" y1="146" x2="130" y2="154" stroke="var(--perpl)" stroke-width="1.2"/>
+          <text x="95" y="147" text-anchor="middle" font-size="10" fill="var(--perpl)" font-weight="700">τ</text>
+          <line x1="210" y1="150" x2="420" y2="150" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <line x1="210" y1="146" x2="210" y2="154" stroke="var(--muted)" stroke-width="1.2"/>
+          <line x1="420" y1="146" x2="420" y2="154" stroke="var(--muted)" stroke-width="1.2"/>
+          <text x="315" y="147" text-anchor="middle" font-size="9" fill="var(--muted)">network delay Δ</text>
         </g>
       </svg>
       <p class="cap">Slots open every interval τ and overlap, so blocks never wait for each other and the interval drops <b>below the network delay Δ</b> — with speculative finality after one voting round. Quote, fill, and cancel at CEX-grade latency, fully on-chain.</p>

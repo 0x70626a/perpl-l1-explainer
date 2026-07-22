@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="How Perpl caps open interest and descends leverage as a market fills — an interactive walkthrough of the on-chain mechanism that makes an oversized position unable to become bad debt.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Leverage Descent — how Perpl bounds open interest">
+<meta property="og:description" content="Interactive: what happens as open interest approaches the cap, in normal and JELLY-style stress scenarios.">
+<meta name="twitter:card" content="summary_large_image">
+<title>Perpl · The Leverage Descent</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<style>
+  :root {
+    --bg: #f4f3f9; --surface: #fbfaff; --surface-2: #f6f4fc;
+    --ink: #16151d; --ink-soft: #3a3846; --muted: #6b697c; --line: #e6e3ef;
+    --perpl: #6F5CFF; --amber: #c67c1a; --perpl-soft: #ecebff;
+    --good: #178a4c; --bad: #c0392b; --good-soft:#e2f5ec; --bad-soft:#fbe7e4;
+    --glow: rgba(111,92,255,0.20);
+    --serif: "Iowan Old Style", Georgia, "Times New Roman", ui-serif, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+    --maxw: 820px; --wide: 960px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e0d16; --surface: #16151f; --surface-2: #1b1926;
+      --ink: #ecebf6; --ink-soft: #c9c6d8; --muted: #9793a9; --line: #262435;
+      --perpl: #8E7DFF; --amber: #f5b23f; --perpl-soft: #1f1c37;
+      --good: #35c46f; --bad: #f2685a; --good-soft:#10251a; --bad-soft:#2a1310;
+      --glow: rgba(142,125,255,0.18);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f3f9; --surface: #fbfaff; --surface-2: #f6f4fc;
+    --ink: #16151d; --ink-soft: #3a3846; --muted: #6b697c; --line: #e6e3ef;
+    --perpl: #6F5CFF; --amber: #c67c1a; --perpl-soft: #ecebff;
+    --good: #178a4c; --bad: #c0392b; --good-soft:#e2f5ec; --bad-soft:#fbe7e4; --glow: rgba(111,92,255,0.20);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e0d16; --surface: #16151f; --surface-2: #1b1926;
+    --ink: #ecebf6; --ink-soft: #c9c6d8; --muted: #9793a9; --line: #262435;
+    --perpl: #8E7DFF; --amber: #f5b23f; --perpl-soft: #1f1c37;
+    --good: #35c46f; --bad: #f2685a; --good-soft:#10251a; --bad-soft:#2a1310; --glow: rgba(142,125,255,0.18);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans);
+    line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  .wrap { max-width: var(--wide); margin: 0 auto; padding: 0 24px; }
+  .col { max-width: var(--maxw); margin: 0 auto; }
+  h1,h2,h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; line-height: 1.12;
+    letter-spacing: -0.01em; margin: 0; }
+  p { margin: 0; }
+  a { color: var(--perpl); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  .hero { position: relative; padding: 84px 0 30px; }
+  .hero::before { content:""; position:absolute; inset:-10% -20% auto 20%; height:340px;
+    background: radial-gradient(60% 60% at 60% 30%, var(--glow), transparent 70%); filter: blur(8px); z-index:0; pointer-events:none; }
+  .hero .col { position: relative; z-index: 1; }
+  .hero h1 { font-size: clamp(30px, 5.4vw, 54px); margin: 16px 0 0; }
+  .hero h1 em { font-style: normal; color: var(--perpl); }
+  .lede { font-size: clamp(16px, 2.2vw, 20px); color: var(--ink-soft); max-width: 60ch; margin-top: 18px; }
+
+  section { padding: 34px 0; }
+  .rule { height:1px; background: var(--line); border:0; margin:0; }
+  .sec-head { display:flex; align-items:baseline; gap:14px; margin-bottom:6px; scroll-margin-top: 20px; }
+  .sec-no { font-family: var(--mono); color: var(--perpl); font-size: 13px; }
+  h2 { font-size: clamp(22px, 3.4vw, 30px); }
+  .sec-sub { color: var(--muted); margin-top: 8px; max-width: 64ch; font-size: 15px; }
+  p.body { margin-top: 14px; color: var(--ink-soft); max-width: 64ch; }
+  p.body + p.body { margin-top: 12px; }
+
+  .tocnav { display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
+  .tocnav a { font-family: var(--mono); font-size:12px; color: var(--ink-soft); padding:6px 12px;
+    border:1px solid var(--line); border-radius:999px; background: var(--surface); }
+  .tocnav a:hover { color: var(--perpl); border-color: color-mix(in srgb, var(--perpl) 55%, var(--line)); }
+  .themebtn { position: fixed; top: 16px; right: 16px; z-index: 20; font-family: var(--mono); font-size: 12px;
+    background: var(--surface); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 12px; cursor: pointer; }
+  .themebtn:hover { border-color: var(--perpl); color: var(--perpl); }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .panel h3 { font-size: 18px; margin-bottom: 4px; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 20px; }
+  .cap { font-size: 12.5px; color: var(--muted); margin-top: 14px; max-width: 66ch; }
+  .cap b { color: var(--ink-soft); font-weight: 600; }
+  .note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.03em; }
+
+  /* key facts row */
+  .facts { display:grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 22px; }
+  .fact { background: var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .fact .k { font-family: var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--serif); font-size: 19px; margin-top:6px; color: var(--ink); }
+  .fact .v b { color: var(--perpl); font-weight: 600; }
+
+  /* sandbox */
+  .sandbox { margin-top: 22px; border:1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .sb-grid { display:grid; grid-template-columns: 300px 1fr; }
+  .sb-controls { padding: 20px; border-right: 1px solid var(--line); background: var(--surface-2); }
+  .sb-viz { padding: 20px; min-width: 0; }
+  .ctl { margin-bottom: 18px; }
+  .ctl label { display:flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
+  .ctl label .cur { color: var(--perpl); font-weight: 600; }
+  input[type=range] { width: 100%; accent-color: var(--perpl); cursor: pointer; }
+  .segbtns { display:flex; gap:6px; flex-wrap: wrap; }
+  .seg { font-family: var(--mono); font-size: 12px; padding: 6px 10px; border-radius: 8px; border:1px solid var(--line);
+    background: var(--surface); color: var(--ink-soft); cursor:pointer; }
+  .seg[aria-pressed=true] { background: var(--perpl); color:#fff; border-color: var(--perpl); }
+  .presets { display:flex; flex-direction: column; gap:6px; }
+  .preset { text-align:left; font-family: var(--sans); font-size: 13px; padding: 9px 11px; border-radius: 9px;
+    border:1px solid var(--line); background: var(--surface); color: var(--ink); cursor:pointer; line-height:1.35; }
+  .preset[aria-pressed=true] { border-color: var(--perpl); box-shadow: 0 0 0 2px var(--glow); }
+  .preset b { display:block; font-family: var(--mono); font-size: 11px; letter-spacing:.04em; color: var(--perpl); text-transform: uppercase; margin-bottom:2px; }
+
+  .readout { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 4px; }
+  .ro { background: var(--surface-2); border:1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .ro .k { font-family: var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color: var(--muted); }
+  .ro .v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 600; margin-top:4px; letter-spacing:-0.02em; }
+  .ro .s { font-size: 11px; color: var(--muted); margin-top:2px; }
+  .ro.hl .v { color: var(--perpl); }
+
+  .verdict { margin-top: 14px; border-radius: 10px; padding: 12px 14px; font-size: 14px; border:1px solid var(--line); background: var(--surface-2); }
+  .verdict.ok { border-color: color-mix(in srgb, var(--good) 40%, var(--line)); background: var(--good-soft); }
+  .verdict.warn { border-color: color-mix(in srgb, var(--amber) 45%, var(--line)); background: color-mix(in srgb, var(--amber) 12%, var(--surface)); }
+  .verdict.stop { border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); background: var(--bad-soft); }
+  .verdict b { font-weight: 700; }
+
+  /* OI gauge */
+  .gauge { position: relative; height: 30px; background: var(--surface-2); border:1px solid var(--line); border-radius: 8px; margin-top: 14px; overflow: hidden; }
+  .gauge .cur { position:absolute; inset:0 auto 0 0; background: var(--perpl); border-radius: 7px 0 0 7px; }
+  .gauge .fwd { position:absolute; inset:0 auto 0 0; background: color-mix(in srgb, var(--perpl) 34%, transparent); }
+  .gauge .th { position:absolute; top:0; bottom:0; width:0; border-left:1.5px dashed var(--muted); }
+  .gauge .th span { position:absolute; top:-17px; transform: translateX(-50%); font-family:var(--mono); font-size:9.5px; color:var(--muted); }
+  .gaugewrap { margin-top: 22px; }
+  .gaugewrap .lbl { display:flex; justify-content: space-between; font-family:var(--mono); font-size:11px; color: var(--muted); }
+
+  svg.chart { width: 100%; height: auto; display:block; }
+  .chart text { font-family: var(--mono); }
+
+  /* jelly */
+  .jgrid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  .jcard { border:1px solid var(--line); border-radius: 14px; padding: 18px; background: var(--surface); }
+  .jcard.bad { border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+  .jcard.good { border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
+  .jcard h4 { margin:0 0 4px; font-family: var(--serif); font-size: 17px; }
+  .jcard .tag { font-family: var(--mono); font-size: 10.5px; letter-spacing:.08em; text-transform: uppercase; }
+  .jcard.bad .tag { color: var(--bad); } .jcard.good .tag { color: var(--good); }
+  .jbar { margin-top: 12px; }
+  .jbar .lb { display:flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-bottom: 4px; }
+  .jtrack { height: 16px; background: var(--surface-2); border:1px solid var(--line); border-radius: 5px; overflow:hidden; position: relative; }
+  .jfill { position:absolute; inset:0 auto 0 0; border-radius: 4px; transition: width .35s ease, background .35s ease; }
+  .vault { height: 22px; border-radius: 6px; border:1px solid var(--line); overflow:hidden; position: relative; background: var(--surface-2); margin-top: 6px; }
+  .vaultfill { position:absolute; inset:0 auto 0 0; transition: width .4s ease, background .4s ease; }
+  .jverdict { margin-top: 12px; font-size: 13px; font-family: var(--mono); }
+  .jcard.bad .jverdict { color: var(--bad); } .jcard.good .jverdict { color: var(--good); }
+
+  footer { padding: 40px 0 70px; color: var(--muted); font-size: 12.5px; }
+  footer .col { border-top: 1px solid var(--line); padding-top: 20px; }
+  .discl { font-size: 11.5px; color: var(--muted); margin-top: 10px; max-width: 70ch; }
+
+  @media (max-width: 720px) {
+    .sb-grid { grid-template-columns: 1fr; }
+    .sb-controls { border-right: 0; border-bottom: 1px solid var(--line); }
+    .grid2, .jgrid, .facts, .readout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<button class="themebtn" id="themebtn" aria-label="Toggle theme">◐ theme</button>
+
+<header class="hero"><div class="wrap"><div class="col">
+  <div class="eyebrow">Perpl · Risk mechanics</div>
+  <h1>The <em>leverage descent</em>: why no position can grow into bad debt</h1>
+  <p class="lede">Every perp venue has one nightmare — a position too big for the market to absorb, dumped onto an
+    under-funded backstop. Perpl makes that outcome impossible with a single on-chain rule: as a market's open
+    interest approaches its cap, the maximum leverage on new size <em>descends</em> toward zero. Here's how it
+    behaves — normally, and under a JELLY-style attack. Play with it below.</p>
+  <nav class="tocnav">
+    <a href="#oi">01 · Open interest</a>
+    <a href="#descent">02 · The descent</a>
+    <a href="#sandbox">03 · Sandbox</a>
+    <a href="#jelly">04 · The JELLY scenario</a>
+    <a href="#you">05 · What it means</a>
+  </nav>
+</div></div></header>
+
+<div class="wrap"><div class="col"><hr class="rule"></div></div>
+
+<!-- 01 -->
+<section id="oi"><div class="wrap"><div class="col">
+  <div class="sec-head"><span class="sec-no">01</span><h2>Open interest, and why it has a cap</h2></div>
+  <p class="sec-sub">Open interest (OI) is the total size of all open positions in a market. A cap keeps that total
+    within a sane fraction of the underlying asset — not to guarantee the book can absorb a liquidation, but to keep
+    the market's risk bounded relative to how much of the asset actually exists.</p>
+  <p class="body">Perpl does <b>not</b> slam a hard door at the cap. Instead, as OI climbs toward the maximum, the
+    contract quietly raises the price of adding more: it reduces the maximum leverage allowed on a new or larger
+    order, forcing more collateral behind size opened near the top. A position opened at the cap is so
+    over-collateralised it essentially cannot go bankrupt from a price move — on liquidation it just returns its own
+    collateral. It never needs the order book, and it never needs the insurance fund.</p>
+  <div class="facts">
+    <div class="fact"><div class="k">What it bounds</div><div class="v"><b>Solvency</b>, not liquidity — a per-position over-collateralisation limit</div></div>
+    <div class="fact"><div class="k">Who it looks at</div><div class="v"><b>Identity-blind</b> — it keys on the market's total OI, never on who is trading</div></div>
+    <div class="fact"><div class="k">When it bites</div><div class="v">Only <b>opening / increasing</b> near the cap. Closing is always free.</div></div>
+  </div>
+</div></div></section>
+
+<!-- 02 -->
+<section id="descent"><div class="wrap"><div class="col">
+  <div class="sec-head"><span class="sec-no">02</span><h2>The descent, in one curve</h2></div>
+  <p class="sec-sub">One contract function maps a market's <em>forward-looking</em> open interest — the OI the market
+    would have if your order filled — to the maximum leverage you're allowed. Below 90% of the cap, nothing changes.
+    From 90% to 95% leverage falls to 1×. From 95% to the cap it falls to 0.01× (you must post up to 100× the
+    position's value). At or beyond the cap, it's pinned at 0.01×.</p>
+  <div class="panel" style="margin-top:20px">
+    <svg class="chart" id="curveStatic" viewBox="0 0 680 300" role="img" aria-label="Max leverage stays flat until 90% of the OI cap, then descends linearly to 1x at 95%, then to 0.01x at 100%."></svg>
+    <p class="cap"><b>Max leverage vs. forward-looking OI.</b> Flat static leverage until 90% of cap, a linear descent to
+      unity (1×) by 95%, then to the 0.01× floor at the cap. The curve is piecewise-linear in leverage; required
+      collateral is its inverse, so it rises gently, then to 1× notional, then to ~100× notional at the cap.</p>
+  </div>
+</div></div></section>
+
+<!-- 03 sandbox -->
+<section id="sandbox"><div class="wrap"><div class="col">
+  <div class="sec-head"><span class="sec-no">03</span><h2>Sandbox — push a market toward its cap</h2></div>
+  <p class="sec-sub">Pick a market, set how full it already is, and size an order. The dot on the curve is where your
+    order lands (current OI + your size). Watch the max leverage, and the collateral your order demands, move in
+    real time. Start with the guided scenarios.</p>
+
+  <div class="sandbox"><div class="sb-grid">
+    <div class="sb-controls">
+      <div class="ctl">
+        <label>Market <span class="cur" id="mktLbl">Alt · 10× max</span></label>
+        <div class="segbtns" id="mktBtns">
+          <button class="seg" data-mkt="major">Major</button>
+          <button class="seg" data-mkt="alt" aria-pressed="true">Alt</button>
+          <button class="seg" data-mkt="tail">Long-tail</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Current open interest <span class="cur"><span id="oiLbl">30</span>% of cap</span></label>
+        <input type="range" id="oi" min="0" max="100" step="1" value="30">
+      </div>
+      <div class="ctl">
+        <label>Your order size <span class="cur"><span id="ordLbl">5</span>% of cap</span></label>
+        <input type="range" id="ord" min="0" max="20" step="0.5" value="5">
+      </div>
+      <div class="ctl" style="margin-bottom:6px">
+        <label style="margin-bottom:10px">Guided scenarios</label>
+        <div class="presets" id="presets">
+          <button class="preset" data-p="normal"><b>Normal</b>Market a third full. Open at full leverage — the descent is dormant.</button>
+          <button class="preset" data-p="approach"><b>Approaching the cap</b>OI in the 90–95% band. Leverage descends; the same order needs more collateral.</button>
+          <button class="preset" data-p="atcap"><b>At the cap</b>Forward OI at 100%. Opening is pinned to 0.01× — ~100× collateral. Closing is still free.</button>
+        </div>
+      </div>
+    </div>
+    <div class="sb-viz">
+      <svg class="chart" id="curveLive" viewBox="0 0 680 300" role="img" aria-label="Live leverage-descent curve with a marker at your order's forward-looking open interest."></svg>
+      <div class="gaugewrap">
+        <div class="lbl"><span>open interest</span><span id="gaugeCap">cap</span></div>
+        <div class="gauge" id="gauge">
+          <div class="cur" id="gCur"></div><div class="fwd" id="gFwd"></div>
+          <div class="th" style="left:90%"><span>90</span></div>
+          <div class="th" style="left:95%"><span>95</span></div>
+          <div class="th" style="left:100%"><span>100</span></div>
+        </div>
+      </div>
+      <div class="readout" style="margin-top:22px">
+        <div class="ro"><div class="k">Forward OI</div><div class="v" id="roFwd">35%</div><div class="s" id="roFwdSub">of cap</div></div>
+        <div class="ro hl"><div class="k">Max leverage</div><div class="v" id="roLev">10.0×</div><div class="s" id="roLevSub">static 10×</div></div>
+        <div class="ro"><div class="k">Collateral for order</div><div class="v" id="roCol">$0</div><div class="s" id="roColSub">1× the static minimum</div></div>
+      </div>
+      <div class="verdict ok" id="verdict"></div>
+    </div>
+  </div></div>
+  <p class="note" style="margin-top:12px">Numbers are illustrative — the mechanism, thresholds (90 / 95 / 100%) and 0.01× floor mirror the on-chain contract; the market caps shown are round example values, not any live market's real limit.</p>
+</div></div></section>
+
+<!-- 04 jelly -->
+<section id="jelly"><div class="wrap"><div class="col">
+  <div class="sec-head"><span class="sec-no">04</span><h2>The JELLY scenario — the attack the descent defuses</h2></div>
+  <p class="sec-sub">In March 2025 a trader on another venue opened an oversized short in a thin memecoin (~$4M, ~40% of
+    its market cap) at 20×, then pushed the price so the position was force-liquidated into the protocol's
+    market-maker vault. The book was far too thin to absorb it; the vault inherited a deeply underwater position and
+    its unrealised loss peaked around $12–13M. Same pattern as POPCAT and the 2022 Mango exploit: an oversized
+    position in a thin, manipulable market, dumped onto an under-funded backstop.</p>
+  <p class="body">Drag the attacker's target size below and compare. <b>Without</b> an OI cap and descent, the position
+    grows unbounded on tiny collateral and the backstop eats the gap. <b>With</b> Perpl's descent, the same target
+    runs straight into collapsing leverage — the collateral required explodes, the position is bounded by the cap,
+    and on liquidation it returns its own collateral. The backstop absorbs nothing.</p>
+
+  <div class="panel" style="margin-top:18px">
+    <div class="ctl" style="margin-bottom:8px">
+      <label>Attacker's target position <span class="cur"><span id="jLbl">120</span>% of the market's OI cap</span></label>
+      <input type="range" id="jelly" min="10" max="200" step="5" value="120">
+    </div>
+    <div class="jgrid">
+      <div class="jcard bad">
+        <div class="tag">Without cap + descent</div>
+        <h4>The backstop eats it</h4>
+        <div class="jbar"><div class="lb"><span>position (20×, tiny collateral)</span><span id="jwPos">$21.6M</span></div>
+          <div class="jtrack"><div class="jfill" id="jwPosBar" style="background:var(--bad)"></div></div></div>
+        <div class="jbar"><div class="lb"><span>book depth (what clears cleanly)</span><span id="jwBook">$0.5M</span></div>
+          <div class="jtrack"><div class="jfill" id="jwBookBar" style="background:var(--muted)"></div></div></div>
+        <div class="jbar"><div class="lb"><span>backstop vault health</span><span id="jwVaultL">−$19.1M</span></div>
+          <div class="vault"><div class="vaultfill" id="jwVault"></div></div></div>
+        <div class="jverdict" id="jwVerdict">Bad debt: $19.1M — vault insolvent.</div>
+      </div>
+      <div class="jcard good">
+        <div class="tag">With Perpl's descent</div>
+        <h4>The attack prices itself out</h4>
+        <div class="jbar"><div class="lb"><span>position (bounded by the cap)</span><span id="jgPos">$18.0M</span></div>
+          <div class="jtrack"><div class="jfill" id="jgPosBar" style="background:var(--perpl)"></div></div></div>
+        <div class="jbar"><div class="lb"><span>collateral the descent demands</span><span id="jgCol">$18.0M</span></div>
+          <div class="jtrack"><div class="jfill" id="jgColBar" style="background:var(--good)"></div></div></div>
+        <div class="jbar"><div class="lb"><span>backstop vault health</span><span id="jgVaultL">100%</span></div>
+          <div class="vault"><div class="vaultfill" id="jgVault"></div></div></div>
+        <div class="jverdict" id="jgVerdict">Bad debt: $0 — position is self-insured.</div>
+      </div>
+    </div>
+    <p class="cap"><b>Read it as:</b> the descent doesn't block the attacker — it makes building an oversized position
+      require so much collateral that the position can only be entered if it's already over-collateralised enough to
+      cover itself. The dangerous action (a large, one-sided position near the cap) is exactly the one the mechanism
+      taxes hardest, identity-blind, for everyone.</p>
+  </div>
+</div></div></section>
+
+<!-- 05 -->
+<section id="you"><div class="wrap"><div class="col">
+  <div class="sec-head"><span class="sec-no">05</span><h2>What it means if you trade here</h2></div>
+  <div class="grid2">
+    <div class="panel"><h3>You can always close</h3><p class="cap" style="margin-top:8px">The descent only touches orders
+      that <b>open or increase</b> a position. Closing — or reducing — is never penalised, at any OI. If a market is
+      near its cap you are never trapped in a position.</p></div>
+    <div class="panel"><h3>Your liquidation price doesn't move</h3><p class="cap" style="margin-top:8px">The descent
+      sets the leverage on <b>new</b> size. The maintenance margin on an existing position — the price at which it
+      liquidates — is fixed when you open it and does not change as the market fills.</p></div>
+    <div class="panel"><h3>Near the cap, opening costs more collateral</h3><p class="cap" style="margin-top:8px">If a
+      market is in the top 10% of its cap, a new position simply requires more margin for the same size. The message
+      is <b>"this costs more collateral,"</b> never "you're blocked."</p></div>
+    <div class="panel"><h3>It's the same rule for everyone</h3><p class="cap" style="margin-top:8px">There's no
+      allowlist and no per-account tier. The descent reads one number — the market's total OI — so it can't be gamed
+      by splitting a position across wallets.</p></div>
+  </div>
+  <p class="body" style="margin-top:20px; font-size: 17px; color: var(--ink);">Bound the size to the asset. Descend the
+    leverage before the cap. Keep every position self-insured. No position grows into bad debt. Onchain, by
+    construction.</p>
+</div></div></section>
+
+<footer><div class="wrap"><div class="col">
+  Perpl · The Leverage Descent. An interactive explainer of the open-interest / leverage-descent mechanism.
+  <p class="discl">Illustrative throughout: the mechanism, the 90 / 95 / 100% thresholds and the 0.01× floor mirror
+    the on-chain contract, but all market caps, sizes, book-depth and vault figures are round example values chosen
+    for clarity, not any live market's real parameters. The March 2025 memecoin incident and its figures are drawn
+    from public post-mortems and are described only to illustrate the class of risk this mechanism addresses. Not
+    financial advice.</p>
+</div></div></footer>
+
+<script>
+(function(){
+  "use strict";
+  // ---- SC-accurate leverage-descent (getCurrentIMF, expressed in leverage terms) ----
+  var T1 = 0.90, T2 = 0.95, UNITY = 1.0, FLOOR = 0.01;
+  function maxLev(fpct, S){
+    if (fpct < T1) return S;
+    if (fpct < T2) return S + (fpct - T1) / (T2 - T1) * (UNITY - S);
+    if (fpct < 1)  return UNITY + (fpct - T2) / (1 - T2) * (FLOOR - UNITY);
+    return FLOOR;
+  }
+  var MARKETS = {
+    major: { name:'Major', lev:15, cap:18000000 },
+    alt:   { name:'Alt',   lev:10, cap:12000000 },
+    tail:  { name:'Long-tail', lev:5, cap:4000000 }
+  };
+  var PRESETS = {
+    normal:   { mkt:'alt',   oi:30, ord:5 },
+    approach: { mkt:'alt',   oi:89, ord:4 },
+    atcap:    { mkt:'major', oi:97, ord:4 }
+  };
+  var state = { mkt:'alt', oi:30, ord:5, preset:null, jelly:120 };
+
+  // ---- formatting ----
+  function usd(n){
+    var a = Math.abs(n);
+    if (a >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+    if (a >= 1e6) return '$' + (n/1e6).toFixed(n/1e6>=100?0:2) + 'M';
+    if (a >= 1e3) return '$' + (n/1e3).toFixed(0) + 'k';
+    return '$' + Math.round(n);
+  }
+  function levStr(l){ return (l >= 1 ? l.toFixed(1) : l.toFixed(2)) + '×'; }
+
+  // ---- curve SVG ----
+  var GEO = { w:680, h:300, l:52, r:20, t:20, b:44 };
+  GEO.pw = GEO.w - GEO.l - GEO.r; GEO.ph = GEO.h - GEO.t - GEO.b;
+  function X(pct){ return GEO.l + (pct/100) * GEO.pw; }            // pct 0..100
+  function Y(lev, S){ return GEO.t + (1 - lev/S) * GEO.ph; }
+  function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+  function drawCurve(svg, S, markerPct, markerLev){
+    var cP = css('--perpl'), cMut = css('--muted'), cLine = css('--line'), cInk = css('--ink-soft'), cAmb = css('--amber');
+    var pts = [ [0,S], [90,S], [95,UNITY], [100,FLOOR] ].map(function(p){ return X(p[0]).toFixed(1)+','+Y(p[1],S).toFixed(1); }).join(' ');
+    var s = '';
+    // descent zone shading
+    s += '<rect x="'+X(90)+'" y="'+GEO.t+'" width="'+(X(100)-X(90))+'" height="'+GEO.ph+'" fill="'+cP+'" opacity="0.06"/>';
+    // axes
+    s += '<line x1="'+GEO.l+'" y1="'+(GEO.t+GEO.ph)+'" x2="'+(GEO.l+GEO.pw)+'" y2="'+(GEO.t+GEO.ph)+'" stroke="'+cLine+'"/>';
+    s += '<line x1="'+GEO.l+'" y1="'+GEO.t+'" x2="'+GEO.l+'" y2="'+(GEO.t+GEO.ph)+'" stroke="'+cLine+'"/>';
+    // y ticks: 0, 1 (unity), S
+    [ [0,'0'], [1,'1×'], [S, S+'×'] ].forEach(function(t){
+      var y = Y(t[0],S);
+      s += '<text x="'+(GEO.l-8)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="10" fill="'+cMut+'">'+t[1]+'</text>';
+      s += '<line x1="'+(GEO.l-4)+'" y1="'+y+'" x2="'+GEO.l+'" y2="'+y+'" stroke="'+cLine+'"/>';
+    });
+    // unity dotted reference
+    s += '<line x1="'+GEO.l+'" y1="'+Y(1,S)+'" x2="'+(GEO.l+GEO.pw)+'" y2="'+Y(1,S)+'" stroke="'+cMut+'" stroke-dasharray="3 4" opacity="0.5"/>';
+    // threshold verticals
+    [90,95,100].forEach(function(p){
+      s += '<line x1="'+X(p)+'" y1="'+GEO.t+'" x2="'+X(p)+'" y2="'+(GEO.t+GEO.ph)+'" stroke="'+cMut+'" stroke-dasharray="3 3" opacity="0.6"/>';
+      s += '<text x="'+X(p)+'" y="'+(GEO.t+GEO.ph+16)+'" text-anchor="middle" font-size="10" fill="'+cMut+'">'+p+'%</text>';
+    });
+    s += '<text x="'+(GEO.l+GEO.pw)+'" y="'+(GEO.t+GEO.ph+32)+'" text-anchor="end" font-size="10" fill="'+cMut+'">forward-looking OI (% of cap)</text>';
+    s += '<text x="'+GEO.l+'" y="'+(GEO.t-7)+'" font-size="10" fill="'+cMut+'">max leverage</text>';
+    // band labels
+    s += '<text x="'+X(92.5)+'" y="'+(GEO.t+11)+'" text-anchor="middle" font-size="9.5" fill="'+cP+'">→ 1×</text>';
+    s += '<text x="'+X(97.5)+'" y="'+(GEO.t+11)+'" text-anchor="middle" font-size="9.5" fill="'+cAmb+'">→ 0.01×</text>';
+    // the curve
+    s += '<polyline points="'+pts+'" fill="none" stroke="'+cP+'" stroke-width="2.5" stroke-linejoin="round"/>';
+    // marker
+    if (markerPct != null){
+      var mx = X(Math.max(0,Math.min(100,markerPct))), my = Y(markerLev,S);
+      s += '<line x1="'+mx+'" y1="'+GEO.t+'" x2="'+mx+'" y2="'+(GEO.t+GEO.ph)+'" stroke="'+cInk+'" stroke-width="1" opacity="0.35"/>';
+      s += '<circle cx="'+mx+'" cy="'+my+'" r="6" fill="'+cP+'" stroke="'+css('--surface')+'" stroke-width="2"/>';
+      s += '<text x="'+mx+'" y="'+(my-11)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+cInk+'">'+levStr(markerLev)+'</text>';
+    }
+    svg.innerHTML = s;
+  }
+
+  // ---- main render ----
+  function render(){
+    var m = MARKETS[state.mkt], S = m.lev, cap = m.cap;
+    var curOI = state.oi/100 * cap;
+    var ordN = state.ord/100 * cap;
+    var fwd = curOI + ordN, fpct = fwd/cap;
+    var eff = maxLev(fpct, S);
+    var col = ordN>0 ? ordN/eff : 0;
+    var staticCol = ordN>0 ? ordN/S : 0;
+    var ratio = eff>0 ? S/eff : 0;
+
+    document.getElementById('mktLbl').textContent = m.name + ' · ' + S + '× max';
+    document.getElementById('oiLbl').textContent = state.oi;
+    document.getElementById('ordLbl').textContent = state.ord;
+    document.getElementById('gaugeCap').textContent = 'cap ' + usd(cap);
+
+    // readouts
+    document.getElementById('roFwd').textContent = (fpct*100).toFixed(1) + '%';
+    document.getElementById('roFwdSub').textContent = usd(fwd) + ' of ' + usd(cap);
+    document.getElementById('roLev').textContent = levStr(eff);
+    document.getElementById('roLevSub').textContent = 'static ' + S + '×';
+    document.getElementById('roCol').textContent = usd(col);
+    document.getElementById('roColSub').textContent = ordN>0 ? (ratio<1.05 ? 'full leverage' : ratio.toFixed(1)+'× the static minimum') : 'set an order size';
+
+    // gauge
+    document.getElementById('gCur').style.width = Math.min(100,state.oi) + '%';
+    document.getElementById('gFwd').style.width = Math.min(100,fpct*100) + '%';
+
+    // verdict
+    var v = document.getElementById('verdict'); var cls, html;
+    if (fpct < T1){ cls='ok'; html = '<b>Business as usual.</b> Forward OI is '+(fpct*100).toFixed(0)+'% of cap — below the 90% trigger, so you get the full '+S+'× and the descent is dormant. This is where markets sit essentially all the time.'; }
+    else if (fpct < T2){ cls='warn'; html = '<b>The descent has engaged.</b> Max leverage is '+levStr(eff)+' (down from '+S+'×), so your order needs <b>'+ratio.toFixed(1)+'×</b> the collateral it would below 90%. You can still open — it just costs more margin.'; }
+    else if (fpct < 1){ cls='stop'; html = '<b>Deep in the descent.</b> Leverage is '+levStr(eff)+' — opening this size demands <b>'+usd(col)+'</b> of collateral ('+ratio.toFixed(0)+'× the minimum). Closing, though, is still completely free.'; }
+    else { cls='stop'; html = '<b>At / beyond the cap.</b> New size is pinned to 0.01× — ~100× collateral, so growing OI is effectively priced out. Existing positions are untouched and can still be closed freely.'; }
+    v.className = 'verdict ' + cls; v.innerHTML = html;
+
+    drawCurve(document.getElementById('curveLive'), S, fpct*100, eff);
+
+    // preset button pressed-state
+    Array.prototype.forEach.call(document.querySelectorAll('#presets .preset'), function(b){
+      b.setAttribute('aria-pressed', state.preset === b.dataset.p ? 'true':'false');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#mktBtns .seg'), function(b){
+      b.setAttribute('aria-pressed', state.mkt === b.dataset.mkt ? 'true':'false');
+    });
+  }
+
+  // ---- JELLY comparison ----
+  function renderJelly(){
+    // illustrative reference market
+    var cap = 18000000;        // $ OI cap
+    var book = 500000;         // $ book depth that clears without a crash (thin)
+    var insurance = 2500000;   // $ backstop vault size
+    var target = state.jelly/100 * cap;   // attacker's target notional
+
+    // WITHOUT: position grows to target at 20x (collateral = target/20). On forced
+    // liquidation the vault must eat everything the thin book can't clear, less the tiny collateral.
+    var wCol = target/20;
+    var wBadDebt = Math.max(0, target - book - wCol);
+    var wVaultHealth = insurance - wBadDebt;              // can go negative
+    document.getElementById('jLbl').textContent = state.jelly;
+    document.getElementById('jwPos').textContent = usd(target);
+    document.getElementById('jwBook').textContent = usd(book);
+    document.getElementById('jwPosBar').style.width = Math.min(100, target/(cap*2)*100) + '%';
+    document.getElementById('jwBookBar').style.width = Math.min(100, book/(cap*2)*100) + '%';
+    var wv = document.getElementById('jwVault');
+    if (wVaultHealth >= 0){
+      wv.style.width = (wVaultHealth/insurance*100) + '%'; wv.style.background = css('--amber');
+      document.getElementById('jwVaultL').textContent = usd(wVaultHealth) + ' left';
+      document.getElementById('jwVerdict').textContent = wBadDebt>0 ? 'Vault drained to '+usd(wVaultHealth)+' — one more and it’s gone.' : 'Book absorbed it — but only because the position was small.';
+    } else {
+      wv.style.width = '100%'; wv.style.background = css('--bad');
+      document.getElementById('jwVaultL').textContent = usd(wVaultHealth);
+      document.getElementById('jwVerdict').textContent = 'Bad debt: ' + usd(-wVaultHealth) + ' beyond the vault — insolvent.';
+    }
+
+    // WITH: position bounded by the cap; the descent forces near-cap size to be
+    // over-collateralised, so on liquidation it returns its own collateral. No vault draw.
+    var gPos = Math.min(target, cap);
+    var gpct = gPos/cap;
+    var gLev = Math.max(maxLev(gpct, 10), FLOOR);
+    var gCol = gpct >= 0.90 ? gPos / gLev : gPos / 10;   // collateral the descent demands to hold it
+    document.getElementById('jgPos').textContent = usd(gPos) + (target>cap ? ' (capped)' : '');
+    document.getElementById('jgCol').textContent = usd(gCol);
+    document.getElementById('jgPosBar').style.width = Math.min(100, gPos/(cap*2)*100) + '%';
+    document.getElementById('jgColBar').style.width = Math.min(100, gCol/(cap*2)*100) + '%';
+    var gv = document.getElementById('jgVault');
+    gv.style.width = '100%'; gv.style.background = css('--good');
+    document.getElementById('jgVaultL').textContent = '100% — untouched';
+    document.getElementById('jgVerdict').textContent = target>cap
+      ? 'Can’t exceed the cap; near it, holding needs ~' + usd(gCol) + ' collateral. Bad debt: $0.'
+      : 'Bad debt: $0 — the position is self-insured by its own collateral.';
+  }
+
+  // ---- wire up ----
+  function setPreset(p){
+    var c = PRESETS[p]; if(!c) return;
+    state.mkt = c.mkt; state.oi = c.oi; state.ord = c.ord; state.preset = p;
+    document.getElementById('oi').value = c.oi;
+    document.getElementById('ord').value = c.ord;
+    render();
+  }
+  document.getElementById('oi').addEventListener('input', function(e){ state.oi = +e.target.value; state.preset=null; render(); });
+  document.getElementById('ord').addEventListener('input', function(e){ state.ord = +e.target.value; state.preset=null; render(); });
+  document.getElementById('jelly').addEventListener('input', function(e){ state.jelly = +e.target.value; renderJelly(); });
+  Array.prototype.forEach.call(document.querySelectorAll('#mktBtns .seg'), function(b){
+    b.addEventListener('click', function(){ state.mkt = b.dataset.mkt; state.preset=null; render(); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#presets .preset'), function(b){
+    b.addEventListener('click', function(){ setPreset(b.dataset.p); });
+  });
+
+  // theme toggle
+  var tb = document.getElementById('themebtn');
+  tb.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme');
+    var next = cur === 'dark' ? 'light' : (cur === 'light' ? 'dark' : (matchMedia('(prefers-color-scheme: dark)').matches ? 'light':'dark'));
+    document.documentElement.setAttribute('data-theme', next);
+    redraw();
+  });
+  function redraw(){
+    drawCurve(document.getElementById('curveStatic'), MARKETS.alt.lev, null, null);
+    render(); renderJelly();
+  }
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+
+  // initial paint
+  drawCurve(document.getElementById('curveStatic'), MARKETS.alt.lev, null, null);
+  render();
+  renderJelly();
+})();
+</script>
+</body>
+</html>
